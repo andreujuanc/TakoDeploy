@@ -296,9 +296,9 @@ namespace TakoDeployWPF
             //DocumentManager.Save();
         }
 
-        private void ExecuteValidate(object o)
+        private async void ExecuteValidate(object o)
         {
-
+            await DocumentManager.Current.Validate();
         }
 
         private void ClosingEventHandler(object sender, MaterialDesignThemes.Wpf.DialogClosingEventArgs eventArgs)

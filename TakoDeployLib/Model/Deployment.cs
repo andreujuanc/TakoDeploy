@@ -47,11 +47,11 @@ namespace TakoDeployCore.Model
             OnPropertyChanged("Targets");
         }
 
-        public async Task StartAsync(IProgress<ProgressEventArgs> progress)
+        public async Task ValidateAsync(IProgress<ProgressEventArgs> progress)
         {
             Targets.Clear();
             foreach (var source in Sources)
-            {   
+            {
                 if (source.Targets.Count == 0)
                 {
                     await source.PopulateTargets();
@@ -63,8 +63,13 @@ namespace TakoDeployCore.Model
                 }
             }
             await Task.Delay(500);
-            
             if (Targets == null || Targets.Count == 0) throw new InvalidOperationException("Cannot start deployment without target.");
+            return;
+        }
+
+        public async Task StartAsync(IProgress<ProgressEventArgs> progress)
+        {            
+            
             foreach (var item in Targets)
             {
                 await OnEachTarget(progress, item);
@@ -148,5 +153,6 @@ namespace TakoDeployCore.Model
             return true;
         }
 
+      
     }
 }

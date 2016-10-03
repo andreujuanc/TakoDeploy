@@ -21,10 +21,8 @@ namespace TakoDeployCore
             try
             {
                 OnProgress = onProgress;
-                if (Deployment == null) throw new InvalidOperationException("Deployment is null.");
-                if (Deployment.Sources == null) throw new InvalidOperationException("Source is null.");
-                if (Deployment.Sources.Count == 0) throw new InvalidOperationException("At least one source needs to be defined.");
 
+                await ValidateDeploy(onProgress);
 
                 var progress = new Progress<ProgressEventArgs>(OnProgress);
                 //var task = Task.Run(() => Deployment.StartAsync(progress));
@@ -33,6 +31,24 @@ namespace TakoDeployCore
                 //task.Wait();
             }
             catch(Exception ex)
+            {
+                onProgress(new ProgressEventArgs(ex));
+            }
+        }
+
+        public async Task ValidateDeploy(Action<ProgressEventArgs> onProgress)
+        {
+            try
+            {
+                OnProgress = onProgress;
+                if (Deployment == null) throw new InvalidOperationException("Deployment is null.");
+                if (Deployment.Sources == null) throw new InvalidOperationException("Source is null.");
+                if (Deployment.Sources.Count == 0) throw new InvalidOperationException("At least one source needs to be defined.");
+
+                var progress = new Progress<ProgressEventArgs>(OnProgress);
+                await Deployment.ValidateAsync(progress);
+            }
+            catch (Exception ex)
             {
                 onProgress(new ProgressEventArgs(ex));
             }

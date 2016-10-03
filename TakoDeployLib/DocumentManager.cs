@@ -47,6 +47,11 @@ namespace TakoDeployCore
             await new TakoDeploy(this.Deployment).BeginDeploy(e => DeploymentEvent?.Invoke(this, e));
         }
 
+        public async Task Validate()
+        {
+            await new TakoDeploy(this.Deployment).BeginDeploy(e => DeploymentEvent?.Invoke(this, e));
+        }
+
         public static bool Save()
         {
            
@@ -68,5 +73,7 @@ namespace TakoDeployCore
             Current.Deployment.CallPropertyChanges();
             
         }
+
+        
     }
 }
