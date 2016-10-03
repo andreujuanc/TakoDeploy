@@ -1,0 +1,31 @@
+﻿<UserControl x:Class="TakoDeployWPF.Domain.WelcomeScreen"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:TakoDeployWPF.Domain"
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
+             xmlns:wpf="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0"  Style="{StaticResource MaterialDesignDisplay2TextBlock}">
+            Welcome to TakoDeploy!
+        </TextBlock>
+        <TextBlock Grid.Row="1" Style="{StaticResource MaterialDesignDisplay1TextBlock}">
+            This app is not yet production ready.!
+        </TextBlock>
+        <Button IsDefault="True" Style="{DynamicResource MaterialDesignFlatButton}" Grid.Row="2"
+                    Command="{x:Static wpf:DialogHost.CloseDialogCommand}">
+            <Button.CommandParameter>
+                <system:Boolean>True</system:Boolean>
+            </Button.CommandParameter>
+            ACCEPT
+        </Button>
+    </Grid>
+</UserControl>
