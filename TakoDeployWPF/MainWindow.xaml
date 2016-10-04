@@ -34,7 +34,7 @@
                 </Grid.ColumnDefinitions>
                 <Image Source="Images/octopus.png" Margin="5, 10, 5, 10" Stretch="Uniform" ></Image>
                 <WrapPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
-                    
+
                     <Button Style="{DynamicResource MaterialDesignFloatingActionMiniDarkButton}" ToolTip="New" Margin="10, 0, 0, 0" Command="{Binding RunNewDocumentCommand}"  >
                         <materialDesign:PackIcon Kind="File" Height="24" Width="24" />
                     </Button>
@@ -68,6 +68,9 @@
                     <materialDesign:PackIcon Kind="Send" Height="24" Width="24" Margin="10, 0, 0, 0"  />
                 </WrapPanel>
             </Button>
+            <TextBlock HorizontalAlignment="Left" Margin="300,25,0,25" Grid.Column="1" Text="{Binding DeploymentMessage}" VerticalAlignment="Center">
+
+            </TextBlock>
 
             <StackPanel  Background="{DynamicResource PrimaryHueDarkBrush}" Grid.Row="1" Grid.ColumnSpan="1"  Grid.RowSpan="2" >
                 <Grid  Margin="10, 10, 0, 0" >
@@ -93,7 +96,7 @@
                             <materialDesign:PackIcon Kind="LeadPencil" Height="24" Width="24" />
                         </Button>
                     </WrapPanel>
-                    
+
                 </Grid>
 
                 <TreeView x:Name="MainTreeView"
@@ -103,10 +106,16 @@
                     <TreeView.ItemTemplate>
                         <HierarchicalDataTemplate DataType="{x:Type local:TreeItemDataContext}"  
                                               ItemsSource="{Binding SubElements}">
+
                             <TextBlock Text="{Binding HeaderText}" Margin="3 2" Foreground="{DynamicResource PrimaryHueDarkForegroundBrush}"/>
+
                             <HierarchicalDataTemplate.ItemTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding Name}" Margin="3 2"  Foreground="{DynamicResource PrimaryHueDarkForegroundBrush}"/>
+                                    <WrapPanel>
+                                        <TextBlock Text="{Binding Name}" Margin="3 2"  Foreground="{DynamicResource PrimaryHueDarkForegroundBrush}"/>
+                                        <!--<materialDesign:PackIcon Kind="ChemicalWeapon"  ></materialDesign:PackIcon>-->
+                                    </WrapPanel>
+                                    
                                 </DataTemplate>
                             </HierarchicalDataTemplate.ItemTemplate>
                         </HierarchicalDataTemplate>

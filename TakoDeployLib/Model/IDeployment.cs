@@ -11,6 +11,7 @@ namespace TakoDeployCore.Model
 {
     public interface IDeployment : INotifyPropertyChanged
     {
+        DeploymentStatus Status { get; set; }
         Task StartAsync(IProgress<ProgressEventArgs> progress);
         int DeploymentID { get; set; }
         //string SqlSource { get; set; }
@@ -20,5 +21,11 @@ namespace TakoDeployCore.Model
 
         void CallPropertyChanges();
         Task ValidateAsync(IProgress<ProgressEventArgs> progress);
+    }
+    public enum DeploymentStatus
+    {
+        Idle,
+        Running,
+        Error
     }
 }

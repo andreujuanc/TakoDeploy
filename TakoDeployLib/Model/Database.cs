@@ -56,7 +56,7 @@ namespace TakoDeployCore.Model
             }
             catch (Exception ex)
             {
-
+                DeploymentStatus = (ex.InnerException?? ex)?.Message; //OH YEA
             }
             return result;
         }

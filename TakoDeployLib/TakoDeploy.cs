@@ -20,37 +20,54 @@ namespace TakoDeployCore
         {
             try
             {
+                var startTime = DateTime.Now;
                 OnProgress = onProgress;
-
-                await ValidateDeploy(onProgress);
-
+                //Maybe move status management inside Deployment implementation?
+                Deployment.Status = DeploymentStatus.Running;
+                var validationException = await ValidateDeploy(onProgress);
+                if (validationException != null) throw validationException;
                 var progress = new Progress<ProgressEventArgs>(OnProgress);
-                //var task = Task.Run(() => Deployment.StartAsync(progress));
-                var task = await Task.Factory.StartNew(() => Deployment.StartAsync(progress));
-                //task.Wait();
-                //task.Wait();
+                //await Task.Factory.StartNew(() => Deployment.StartAsync(progress));
+                OnProgress(new ProgressEventArgs(string.Format("Deploying...")));
+                await Deployment.StartAsync(progress);
+                Deployment.Status = DeploymentStatus.Idle;
+                var deploymentTime = (DateTime.Now - startTime).TotalSeconds;
+                OnProgress(new ProgressEventArgs(string.Format("Deployed successfully in {0:0.00} seconds", deploymentTime)));
             }
             catch(Exception ex)
             {
+                Deployment.Status = DeploymentStatus.Error;
                 onProgress(new ProgressEventArgs(ex));
             }
         }
 
-        public async Task ValidateDeploy(Action<ProgressEventArgs> onProgress)
+        public async Task<Exception> ValidateDeploy(Action<ProgressEventArgs> onProgress)
         {
             try
             {
                 OnProgress = onProgress;
-                if (Deployment == null) throw new InvalidOperationException("Deployment is null.");
-                if (Deployment.Sources == null) throw new InvalidOperationException("Source is null.");
-                if (Deployment.Sources.Count == 0) throw new InvalidOperationException("At least one source needs to be defined.");
-
                 var progress = new Progress<ProgressEventArgs>(OnProgress);
+                onProgress(new ProgressEventArgs("Validating."));
+
+                var doStatus = Deployment.Status == DeploymentStatus.Idle;
+                
+                if (doStatus)
+                    Deployment.Status = DeploymentStatus.Running;
+                //TODO: Validate Sql Scripts
+                if (Deployment == null) throw new InvalidOperationException("Deployment is null.");
+                if (Deployment.Sources == null) throw new InvalidOperationException("Sources is null.");
+
                 await Deployment.ValidateAsync(progress);
+                if (doStatus)
+                    Deployment.Status = DeploymentStatus.Idle;
+                OnProgress(new ProgressEventArgs());
+                return null;
             }
             catch (Exception ex)
             {
+                Deployment.Status = DeploymentStatus.Error;
                 onProgress(new ProgressEventArgs(ex));
+                return ex;
             }
         }
     }

@@ -73,9 +73,10 @@ namespace TakoDeployWPF
             DataContextModel.TreeSelectedItem = MainTreeView.SelectedItem;
         }
     }
-    public class MainViewModel : INotifyPropertyChanged
+    public class MainViewModel : Notifier
     {
         private List<object> treeViewData;
+        public string DeploymentMessage { get; set; }
         public MainViewModel()
         {
             treeViewData = new List<object>() {
@@ -85,12 +86,10 @@ namespace TakoDeployWPF
             DocumentManager.OnNewDocument += DocumentManager_OnNewDocument;
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
         private void DocumentManager_OnNewDocument(object sender, EventArgs e)
         {
             DocumentManager.Current.DeploymentEvent += Current_DeploymentEvent;
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("TreeViewData"));
+            OnPropertyChanged("TreeViewData");
         }
 
         private void Current_DeploymentEvent(object sender, TakoDeployLib.Model.ProgressEventArgs e)
@@ -100,13 +99,17 @@ namespace TakoDeployWPF
                 var ex2 = e.Exception;
                 if (ex2.InnerException != null)
                     ex2 = ex2.InnerException;
+                MessageBox.Show(ex2.Message, "TakoDeploy Exception", MessageBoxButton.OK, MessageBoxImage.Error);
                 (Microsoft.HockeyApp.HockeyClient.Current as Microsoft.HockeyApp.HockeyClient).HandleException(ex2);
             }
+            if(e.Message != null)
+                DeploymentMessage = e.Message;
+            OnPropertyChanged(null);
         }
 
-        public ICommand RunNewSourceDialogCommand => new ButtonCommand(ExecuteRunDialog, CanExecuteDocumentIsPresent);
-        public ICommand RunNewScriptDialogCommand => new ButtonCommand(ExecuteNewScriptDialog, CanExecuteDocumentIsPresent);
-        public ICommand RunValidateCommand => new ButtonCommand(ExecuteValidate, CanExecuteDocumentIsPresent);
+        public ICommand RunNewSourceDialogCommand => new ButtonCommand(ExecuteRunDialog, CanExecuteGenericButton);
+        public ICommand RunNewScriptDialogCommand => new ButtonCommand(ExecuteNewScriptDialog, CanExecuteGenericButton);
+        public ICommand RunValidateCommand => new ButtonCommand(ExecuteValidate, CanExecuteValidation);
         public ICommand RunDeployCommand => new ButtonCommand(ExecuteRunDeployCommand, CanExecuteDeployment);
 
         public ICommand RunEditSelectedItemCommand => new ButtonCommand(ExecuteEditSelectedItemCommand, IsTreeItemSelected);
@@ -114,7 +117,7 @@ namespace TakoDeployWPF
 
         public ICommand RunNewDocumentCommand => new ButtonCommand(ExecuteNewDocumentCommand);
         public ICommand RunOpenDocumentCommand => new ButtonCommand(ExecuteOpenDocumentCommand);
-        public ICommand RunSaveDocumentCommand => new ButtonCommand(ExecuteSaveDocumentCommand, CanExecuteDocumentIsPresent);
+        public ICommand RunSaveDocumentCommand => new ButtonCommand(ExecuteSaveDocumentCommand, CanExecuteGenericButton);
 
         public List<object> TreeViewData
         {
@@ -140,7 +143,7 @@ namespace TakoDeployWPF
             internal set
             {
                 _windowSize = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("WindowSize"));
+                OnPropertyChanged("WindowSize");
             }
         }
 
@@ -156,13 +159,33 @@ namespace TakoDeployWPF
 
         private async void ExecuteEditSelectedItemCommand(object o)
         {
-            var editSource = new SourceDatabase((SourceDatabase)TreeSelectedItem);
-            var view = new Domain.SourceEditorDialog
+            UserControl view = null;
+            object editedObject = null;
+            if (TreeSelectedItem is SourceDatabase)
             {
-                DataContext = new SourceEditorViewModel() { Source = editSource }
-            };
-            view.Width = 480;
-            view.Height = 600;
+                editedObject = new SourceDatabase((SourceDatabase)TreeSelectedItem);
+                view = new Domain.SourceEditorDialog
+                {
+                    DataContext = new SourceEditorViewModel() { Source = (SourceDatabase)editedObject }
+                };
+                view.Width = 480;
+                view.Height = 600;
+
+            }
+            else if (TreeSelectedItem is SqlScriptFile)
+            {
+                editedObject = new SqlScriptFile((SqlScriptFile)TreeSelectedItem);
+                view = new ScriptEditor
+                {
+                    DataContext = new ScriptEditorViewModel() { Script = (SqlScriptFile)editedObject }
+                };
+                view.Width = WindowSize.Width * 0.80;
+                view.Height = WindowSize.Height * 0.75;
+            }
+            
+            if (view == null) return;
+           
+          
 
             //show the dialog
             var result = await MaterialDesignThemes.Wpf.DialogHost.Show(view, "RootDialog");
@@ -170,7 +193,15 @@ namespace TakoDeployWPF
             {
                 if ((bool)result)
                 {
-                    ((SourceDatabase)TreeSelectedItem).CopyFrom(editSource);
+
+                    if (TreeSelectedItem is SourceDatabase)
+                    {
+                        ((SourceDatabase)TreeSelectedItem).CopyFrom(editedObject as SourceDatabase);
+                    }
+                    else if (TreeSelectedItem is SqlScriptFile)
+                    {
+                        ((SqlScriptFile)TreeSelectedItem).CopyFrom(editedObject as SqlScriptFile);
+                    }
                 }
             }
         }
@@ -318,20 +349,41 @@ namespace TakoDeployWPF
 
         private bool IsTreeItemSelected(object o)
         {
-            return CanExecuteDocumentIsPresent(o) && TreeSelectedItem != null && !(TreeSelectedItem is TreeItemSourcesDataContext);
+            if (!DocumentIsPresent) return false;
+            if (DeploymentIsRunning) return false;
+            if ((TreeSelectedItem as SourceDatabase) == null)
+            {
+                if ((TreeSelectedItem as SqlScriptFile) == null)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
         private bool CanExecuteDeployment(object o)
         {
-            if (DocumentManager.Current == null) return false;
+            if (!DocumentIsPresent) return false;
             if (!DocumentManager.Current.IsModified) return false;
+            if (DeploymentIsRunning) return false;
             return true;
         }
 
-        private bool CanExecuteDocumentIsPresent(object o)
+        private bool CanExecuteValidation(object o)
         {
-            if (DocumentManager.Current == null) return false;
+            if (!DocumentIsPresent) return false;
+            if (DeploymentIsRunning) return false;
             return true;
         }
+        private bool CanExecuteGenericButton(object o)
+        {
+            if (!DocumentIsPresent) return false;
+            if (DeploymentIsRunning) return false;
+            return true;
+        }
+
+        private bool DocumentIsPresent => (DocumentManager.Current != null);
+        private bool DeploymentIsRunning => (DocumentManager.Current != null && DocumentManager.Current.Deployment != null && DocumentManager.Current.Deployment.Status == DeploymentStatus.Running);
 
     }
 

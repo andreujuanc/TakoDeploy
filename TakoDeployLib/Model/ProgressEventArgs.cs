@@ -13,6 +13,11 @@ namespace TakoDeployLib.Model
         {
 
         }
+        public ProgressEventArgs(string message)
+        {
+            Message = message;
+        }
+
         public ProgressEventArgs(TargetDatabase target)
         {
             Target = target;
@@ -22,9 +27,15 @@ namespace TakoDeployLib.Model
            Exception = ex;
         }
 
-        public TargetDatabase Target { get; set; }
-        public Exception Exception { get; set; }
-        public int Status { get; set; }
-        public string Message { get; set; }
+        public ProgressEventArgs(SqlScriptFile scriptFile)
+        {
+            ScriptFile = scriptFile;
+        }
+        private SqlScriptFile ScriptFile { get; }
+
+        public TargetDatabase Target { get; }
+        public Exception Exception { get; }
+        public DeploymentStatus Status { get; }
+        public string Message { get; }
     }
 }

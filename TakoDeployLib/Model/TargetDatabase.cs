@@ -92,7 +92,21 @@ namespace TakoDeployCore.Model
 
         public override void OnInfoMessage(object sender, SqlInfoMessageEventArgs e)
         {
-            
+            if (e == null) return;
+            if (e.Message != null)
+            {
+                DeploymentStatus = e.Message;
+            }
+            if (e.Errors != null)
+            {
+                foreach (object error in e.Errors)
+                {
+                    if (error is SqlError)
+                    {
+                        DeploymentStatus = ((SqlError)error).Message;
+                    }
+                }
+            }
         }
     }
 }

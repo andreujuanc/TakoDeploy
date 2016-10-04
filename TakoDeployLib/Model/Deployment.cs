@@ -24,6 +24,9 @@ namespace TakoDeployCore.Model
         public ObservableCollectionEx<TargetDatabase> Targets { get; set; } = new ObservableCollectionEx<TargetDatabase>();
         public ObservableCollectionEx<SqlScriptFile> ScriptFiles { get; set; } = new ObservableCollectionEx<SqlScriptFile>();
 
+        private DeploymentStatus _status;
+        public DeploymentStatus Status { get { return _status; } set { SetField(ref _status, value); } }
+
         public Deployment()
         {
             Targets.CollectionChanged += Targets_CollectionChanged;
@@ -50,19 +53,43 @@ namespace TakoDeployCore.Model
         public async Task ValidateAsync(IProgress<ProgressEventArgs> progress)
         {
             Targets.Clear();
-            foreach (var source in Sources)
-            {
-                if (source.Targets.Count == 0)
-                {
-                    await source.PopulateTargets();
-                }
 
-                foreach (var target in source.Targets)
+            
+            if (Sources.Count == 0) throw new InvalidOperationException("At least one source needs to be defined.");
+            try
+            {
+                foreach (var source in Sources)
                 {
-                    Targets.Add(target);
+                    if (source.Targets.Count == 0)
+                    {
+                        await source.PopulateTargets();
+                    }
+
+                    foreach (var target in source.Targets)
+                    {
+                        target.DeploymentStatus = "";
+                        Targets.Add(target);
+                    }
+                }
+                foreach (var scriptFile in ScriptFiles)
+                {
+                    foreach (var script in scriptFile.Scripts)
+                    {
+                        var errors = script.Validate();
+                        script.IsValid = errors == null || (errors != null && errors.Count > 0);
+                    }
+
+                    progress.Report(new ProgressEventArgs(scriptFile));
                 }
             }
-            await Task.Delay(500);
+            catch(Exception ex)
+            {
+                progress.Report(new ProgressEventArgs(ex));
+            }
+            await Task.Delay(100);
+            progress.Report(new ProgressEventArgs("Deployment validated!"));
+            
+
             if (Targets == null || Targets.Count == 0) throw new InvalidOperationException("Cannot start deployment without target.");
             return;
         }
@@ -73,7 +100,11 @@ namespace TakoDeployCore.Model
             foreach (var item in Targets)
             {
                 await OnEachTarget(progress, item);
-                await Task.Delay(10);
+#if DEBUG
+                await Task.Delay(50);
+#else
+                await Task.Delay(20);
+#endif
             }
             //var tasks = Targets.Select(async item => await OnEachTarget(progress, item));
             //await Task.WhenAll(tasks);
@@ -84,7 +115,6 @@ namespace TakoDeployCore.Model
         {
             var start = DateTime.Now;
             target.DeploymentStatus = "Starting..";
-            OnProgress(target, progress);
             await DeployToTarget(target, ScriptFiles, progress);
             
             var result =  (int)(DateTime.Now - start).TotalMilliseconds;
@@ -95,10 +125,8 @@ namespace TakoDeployCore.Model
         private async Task DeployToTarget(TargetDatabase target, IEnumerable<SqlScriptFile> scriptFiles, IProgress<ProgressEventArgs> progress)
         {
             target.DeploymentStatus = "Initiating connection...";
-            OnProgress(target, progress);
             var couldOpen = await target.TryConnect();
             target.DeploymentStatus = "Connected!";
-            OnProgress(target, progress);
             if (couldOpen)
             {
                 try
@@ -119,8 +147,9 @@ namespace TakoDeployCore.Model
         private static void OnProgress(TargetDatabase target, IProgress<ProgressEventArgs> progress)
         {
             //progress?.Report(new ProgressEventArgs(target));
-            
         }
+
+        #region INotifyPropertyChanged Implementation
 
         public void CallPropertyChanges()
         {
@@ -153,6 +182,6 @@ namespace TakoDeployCore.Model
             return true;
         }
 
-      
+        #endregion
     }
 }

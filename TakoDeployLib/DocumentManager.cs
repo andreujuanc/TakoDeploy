@@ -44,12 +44,26 @@ namespace TakoDeployCore
 
         public async Task Deploy()
         {
-            await new TakoDeploy(this.Deployment).BeginDeploy(e => DeploymentEvent?.Invoke(this, e));
+            if (this.Deployment.Status == DeploymentStatus.Running)
+            {
+                DeploymentEvent?.Invoke(this.Deployment, new ProgressEventArgs(new InvalidOperationException("Deployment is already running.")));
+            }
+            else
+            {
+                await new TakoDeploy(this.Deployment).BeginDeploy(e => DeploymentEvent?.Invoke(this, e));
+            }
         }
 
         public async Task Validate()
         {
-            await new TakoDeploy(this.Deployment).BeginDeploy(e => DeploymentEvent?.Invoke(this, e));
+            if (this.Deployment.Status == DeploymentStatus.Running)
+            {
+                DeploymentEvent?.Invoke(this.Deployment, new ProgressEventArgs(new InvalidOperationException("Validation is already running.")));
+            }
+            else
+            {
+                await new TakoDeploy(this.Deployment).ValidateDeploy(e => DeploymentEvent?.Invoke(this, e));
+            }
         }
 
         public static bool Save()
