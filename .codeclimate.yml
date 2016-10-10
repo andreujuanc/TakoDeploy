@@ -1,0 +1,9 @@
+JavaScript: true
+Ruby: false
+Python: false
+PHP: false
+
+exclude_paths:
+- **/**/*.xshd 
+- vendor/**/*
+- .gitignore
