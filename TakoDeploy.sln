@@ -22,6 +22,10 @@ Global
 		Release|ARM = Release|ARM
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
+		ReleaseSquirrel|Any CPU = ReleaseSquirrel|Any CPU
+		ReleaseSquirrel|ARM = ReleaseSquirrel|ARM
+		ReleaseSquirrel|x64 = ReleaseSquirrel|x64
+		ReleaseSquirrel|x86 = ReleaseSquirrel|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{7E7105D9-EDE6-41FA-8E53-8AE3ED9403E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -40,6 +44,14 @@ Global
 		{7E7105D9-EDE6-41FA-8E53-8AE3ED9403E6}.Release|x64.Build.0 = Release|Any CPU
 		{7E7105D9-EDE6-41FA-8E53-8AE3ED9403E6}.Release|x86.ActiveCfg = Release|Any CPU
 		{7E7105D9-EDE6-41FA-8E53-8AE3ED9403E6}.Release|x86.Build.0 = Release|Any CPU
+		{7E7105D9-EDE6-41FA-8E53-8AE3ED9403E6}.ReleaseSquirrel|Any CPU.ActiveCfg = Release|Any CPU
+		{7E7105D9-EDE6-41FA-8E53-8AE3ED9403E6}.ReleaseSquirrel|Any CPU.Build.0 = Release|Any CPU
+		{7E7105D9-EDE6-41FA-8E53-8AE3ED9403E6}.ReleaseSquirrel|ARM.ActiveCfg = Release|Any CPU
+		{7E7105D9-EDE6-41FA-8E53-8AE3ED9403E6}.ReleaseSquirrel|ARM.Build.0 = Release|Any CPU
+		{7E7105D9-EDE6-41FA-8E53-8AE3ED9403E6}.ReleaseSquirrel|x64.ActiveCfg = Release|Any CPU
+		{7E7105D9-EDE6-41FA-8E53-8AE3ED9403E6}.ReleaseSquirrel|x64.Build.0 = Release|Any CPU
+		{7E7105D9-EDE6-41FA-8E53-8AE3ED9403E6}.ReleaseSquirrel|x86.ActiveCfg = Release|Any CPU
+		{7E7105D9-EDE6-41FA-8E53-8AE3ED9403E6}.ReleaseSquirrel|x86.Build.0 = Release|Any CPU
 		{5DE31CC4-8781-45C3-B78F-CC9DFB4000F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5DE31CC4-8781-45C3-B78F-CC9DFB4000F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5DE31CC4-8781-45C3-B78F-CC9DFB4000F2}.Debug|ARM.ActiveCfg = Debug|Any CPU
@@ -56,6 +68,14 @@ Global
 		{5DE31CC4-8781-45C3-B78F-CC9DFB4000F2}.Release|x64.Build.0 = Release|Any CPU
 		{5DE31CC4-8781-45C3-B78F-CC9DFB4000F2}.Release|x86.ActiveCfg = Release|Any CPU
 		{5DE31CC4-8781-45C3-B78F-CC9DFB4000F2}.Release|x86.Build.0 = Release|Any CPU
+		{5DE31CC4-8781-45C3-B78F-CC9DFB4000F2}.ReleaseSquirrel|Any CPU.ActiveCfg = ReleaseSquirrel|Any CPU
+		{5DE31CC4-8781-45C3-B78F-CC9DFB4000F2}.ReleaseSquirrel|Any CPU.Build.0 = ReleaseSquirrel|Any CPU
+		{5DE31CC4-8781-45C3-B78F-CC9DFB4000F2}.ReleaseSquirrel|ARM.ActiveCfg = ReleaseSquirrel|Any CPU
+		{5DE31CC4-8781-45C3-B78F-CC9DFB4000F2}.ReleaseSquirrel|ARM.Build.0 = ReleaseSquirrel|Any CPU
+		{5DE31CC4-8781-45C3-B78F-CC9DFB4000F2}.ReleaseSquirrel|x64.ActiveCfg = ReleaseSquirrel|Any CPU
+		{5DE31CC4-8781-45C3-B78F-CC9DFB4000F2}.ReleaseSquirrel|x64.Build.0 = ReleaseSquirrel|Any CPU
+		{5DE31CC4-8781-45C3-B78F-CC9DFB4000F2}.ReleaseSquirrel|x86.ActiveCfg = ReleaseSquirrel|Any CPU
+		{5DE31CC4-8781-45C3-B78F-CC9DFB4000F2}.ReleaseSquirrel|x86.Build.0 = ReleaseSquirrel|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
