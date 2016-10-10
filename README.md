@@ -8,4 +8,4 @@ Best sql script deploy tool
 https://andreujuanc.github.io/TakoDeploy/
 
 ## Download the latest version
-https://github.com/andreujuanc/TakoDeploy/releases
+https://github.com/andreujuanc/TakoDeploy/releases/latest
