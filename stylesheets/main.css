@@ -60,6 +60,10 @@ nav {
 *************************************/
 .side-nav{
 	background: linear-gradient(180deg, lightblue 80px, #27a2d0 82px, #11485C 50%, #08242e 84%, #051015 86%);
+	height: 100vh;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
 
 }
 .side-nav li a{
