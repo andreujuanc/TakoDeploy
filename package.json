@@ -1,0 +1,27 @@
+{
+  "name": "TakoDeployPages",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.html",
+  "dependencies": {
+
+  },
+  "devDependencies": {
+    "grunt-contrib-pug": "^1.0.0",
+    "pug": "^2.0.0-beta6",
+    "grunt": "~0.4.5"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/andreujuanc/TakoDeploy.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/andreujuanc/TakoDeploy/issues"
+  },
+  "homepage": "https://github.com/andreujuanc/TakoDeploy"
+}

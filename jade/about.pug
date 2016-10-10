@@ -1,0 +1,14 @@
+//- var no_nav = true
+- var white_nav = true
+- var page = "About"
+
+doctype html
+html(lang="en")
+  head
+    include _head
+  body
+    include _navbar
+    main
+      include page-contents/about.pug
+    include _footer.pug
+include _scripts.html

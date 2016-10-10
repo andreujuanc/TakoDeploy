@@ -1,0 +1,57 @@
+#index-banner.section
+  .container
+    .row
+      .col.s12.m9
+        h1.header.center-on-small-only About
+        h4.light.green-text.text-lighten-4.center-on-small-only The best sql server multi database deployment tool.
+.container
+  // Outer row
+  .row
+    .col.s12.m9.l10
+      // Material Design
+      #takodeploy.section.scrollspy
+        h2.header TakoDeploy
+        p.caption
+          | I got tired of manually deploying the same script to multiple databases, and checking if everything was ok.
+          | After some time, this process lead to some issues, for example, skipping one database, or forgetting to check the executed script's errors. 
+        .video-container
+          img(src="./images/docs/init.png")
+      #simplicity.section.scrollspy
+        .row.section
+          h2.header.light Simplicity
+          .col.s12.l4
+            img.promo(src='images/databases.png')
+            h4.center Add all the databases you need
+            p.light
+              | Databases can be added via connection strings, choosing the catalog directly or selecting other types of database listing. 
+            br
+          .col.s12.l4
+            img.promo(src='images/scripts.png')
+            h4.center Add and edit your scripts
+            p.light
+              | Add your script from existing file, or just add an empty file, then you can edit it with our support for Avalon Text editor.
+            br
+          .col.s12.l4
+            img.promo(src='images/deploy.png')
+            h4.center Hit Deploy, and grab a cup of coffee!
+            p.light
+              | After adding the databases and scripts, starts the deployment of all scripts to all databases.
+      #features.section.scrollspy
+        .row.section
+          h2.header.light Features
+          .col.s12.l4
+            | TODO: list features
+      
+
+    // Table of contents
+    .col.hide-on-small-only.m3.l2
+      .toc-wrapper
+        div(style='height: 1px;')
+          ul.table-of-contents
+            li
+              a(href='#takodeploy') Takodeploy
+            li
+              a(href='#simplicity') Simplicity
+            li
+              a(href='#features') Features
+// End Container

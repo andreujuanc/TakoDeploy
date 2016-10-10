@@ -1,0 +1,126 @@
+#index-banner.section
+  .container
+    .row
+      .col.s12.m9
+        h1.header.center-on-small-only Getting Started
+        h4.light.green-text.text-lighten-4.center-on-small-only Deploy your scripts to all your databases with ease
+      .col.s12.m3
+        // BuySellAds Zone Code
+        .buysellads-header.center-on-small-only
+          // CarbonAds Zone Code
+          script#_carbonads_js(async='', type='text/javascript', src='//cdn.carbonads.com/carbon.js?zoneid=1673&serve=C6AILKT&placement=materializecss')
+        // End BuySellAds Zone Code
+.container
+  // Outer row
+  .row
+    .section.col.s12.m9.l10
+      #download.row.scrollspy
+        h2.col.s12.header Download
+        p.caption.col.s12
+          | TODO: Download Text
+        .col.s12.m6
+          h4 TakoDeploy Release
+          p
+            .release-info
+              br 
+              br
+              br
+          a#download-release.btn.waves-effect.waves-light.download-button
+            | TakoDeploy Latest Release
+            i.material-icons.right file_download
+        .col.s12.m6
+          h4 TakoDeploy Project
+          p
+            | TODO: About the project
+            br 
+            br
+            br
+          a#download-source.btn.waves-effect.waves-light.download-button
+            | TakoDeploy C# Source
+            i.material-icons.right file_download
+      #download-thanks.row
+        h2.col.s12.header Thanks for Downloading!
+        p.caption.col.s12
+          | TODO: Thanks text
+        .row
+          | TODO: insert footer links
+        br
+        br
+      #setup.row.scrollspy
+        .col.s12
+          h2.header Setup
+          h4 Instalation
+          p
+            | TODO: install process
+          pre.
+        .col.s12
+          h4 Updates
+          p
+            | TODO: About squirrel
+          pre.
+      #documents.row.scrollspy
+        .col.s12
+          h2.header TakoDeploy Documents (.tdd)
+          h4 Save deployment file
+          p
+            | TODO: About the deployment document  
+   
+    // Table of contents
+    .col.hide-on-small-only.m3.l2
+      .toc-wrapper
+        div(style='height: 1px;')
+          ul.table-of-contents
+            li
+              a(href='#download') Download
+            li
+              a(href='#setup') Setup
+            li
+              a(href='#documents') Save Deployment File 
+
+script.
+    $(document).ready(function () {
+        
+    });
+    GetLatestReleaseInfo();
+
+    $('.download-button').click(function(){
+        $('#download').fadeOut();
+        $('#download-thanks').fadeIn();
+    });
+
+    function GetLatestReleaseInfo() {
+        $.getJSON("https://api.github.com/repos/andreujuanc/TakoDeploy/releases/latest").done(function (release) {
+            var asset = null;
+            if(release.assets)
+              for(var i =0; i< release.assets.length; i++){
+                  if(release.assets[i].name ==='Setup.exe')
+                    asset = release.assets[i];
+              }
+
+            if(asset){ 
+              var downloadCount = 0;
+              for (var i = 0; i < release.assets.length; i++) {
+                  downloadCount += release.assets[i].download_count;
+              }
+              var oneHour = 60 * 60 * 1000;
+              var oneDay = 24 * oneHour;
+              var dateDiff = new Date() - new Date(asset.updated_at);
+              var timeAgo;
+              if (dateDiff < oneDay)
+              {
+                  timeAgo = (dateDiff / oneHour).toFixed(1) + " hours ago";
+              }
+              else
+              {
+                  timeAgo = (dateDiff / oneDay).toFixed(1) + " days ago";
+              }
+              
+              var releaseInfo = "Release: " + release.tag_name +  "<br/>It was updated " + timeAgo + "<br/>Downloaded " + downloadCount.toLocaleString() + " times.";
+              $("#download-release").attr("href", asset.browser_download_url);
+            }          
+            
+            $('#download-source').attr("href", release.zipball_url);
+            $(".release-info").html(releaseInfo);
+            $(".release-info").fadeIn("slow");
+        });
+    }
