@@ -21,5 +21,10 @@ namespace TakoDeployCore.DataContext
             var factory = DbProviderFactories.GetFactory(ProviderName);
             return new TakoDbContext(factory);
         }
+
+        public System.Data.DataTable GetFactories()
+        {
+            return DbProviderFactories.GetFactoryClasses();
+        }
     }
 }

@@ -74,6 +74,11 @@ namespace TakoDeployCore.DataContext
             return await this.Connection.QueryAsync(script);
         }
 
+        internal void CloseConnections()
+        {
+            this.Connection?.Close();
+        }
+
         internal async Task<IEnumerable<T>> ExecuteAsync<T>(string script)
         {
             return await this.Connection.QueryAsync<T>(script);

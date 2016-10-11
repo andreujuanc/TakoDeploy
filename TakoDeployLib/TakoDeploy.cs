@@ -22,7 +22,7 @@ namespace TakoDeployCore
             {
                 var startTime = DateTime.Now;
                 OnProgress = onProgress;
-                //Maybe move status management inside Deployment implementation?
+                //FIX: Maybe move status management inside Deployment implementation?
                 Deployment.Status = DeploymentStatus.Running;
                 var validationException = await ValidateDeploy(onProgress);
                 if (validationException != null) throw validationException;
@@ -57,9 +57,9 @@ namespace TakoDeployCore
                 if (Deployment == null) throw new InvalidOperationException("Deployment is null.");
                 if (Deployment.Sources == null) throw new InvalidOperationException("Sources is null.");
 
-                await Deployment.ValidateAsync(progress);
-                if (doStatus)
-                    Deployment.Status = DeploymentStatus.Idle;
+                var exception = await Deployment.ValidateAsync(progress);
+                if (exception != null) return exception;
+                if (doStatus) Deployment.Status = DeploymentStatus.Idle;
                 OnProgress(new ProgressEventArgs());
                 return null;
             }

@@ -20,7 +20,7 @@ namespace TakoDeployCore.Model
         ObservableCollectionEx<SqlScriptFile> ScriptFiles { get; set; }
 
         void CallPropertyChanges();
-        Task ValidateAsync(IProgress<ProgressEventArgs> progress);
+        Task<Exception> ValidateAsync(IProgress<ProgressEventArgs> progress);
     }
     public enum DeploymentStatus
     {

@@ -9,7 +9,7 @@ using TakoDeployCore.DataContext;
 
 namespace TakoDeployCore.Model
 {
-    public abstract class Database : Notifier
+    public abstract class Database : Notifier, IDisposable
     {
 
         private TakoDbContext _context = null;
@@ -49,7 +49,7 @@ namespace TakoDeployCore.Model
         {
             var result = false;
             try
-            {
+            { 
                 await Context.OpenAsync(ConnectionString);
                 result = Context.IsOpen();
                 //Context.FinishConnection();
@@ -59,6 +59,14 @@ namespace TakoDeployCore.Model
                 DeploymentStatus = (ex.InnerException?? ex)?.Message; //OH YEA
             }
             return result;
+        }
+
+        public void Dispose()
+        {
+            if (Context != null)
+            {
+                Context.CloseConnections();
+            }
         }
     }
    

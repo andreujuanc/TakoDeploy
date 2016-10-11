@@ -27,7 +27,7 @@ namespace TakoDeployCore.Model
         private DeploymentStatus _status;
         public DeploymentStatus Status { get { return _status; } set { SetField(ref _status, value); } }
 
-        public Deployment()
+        internal Deployment()
         {
             Targets.CollectionChanged += Targets_CollectionChanged;
             Sources.CollectionChanged += Sources_CollectionChanged;
@@ -50,7 +50,7 @@ namespace TakoDeployCore.Model
             OnPropertyChanged("Targets");
         }
 
-        public async Task ValidateAsync(IProgress<ProgressEventArgs> progress)
+        public async Task<Exception> ValidateAsync(IProgress<ProgressEventArgs> progress)
         {
             Targets.Clear();
 
@@ -71,31 +71,36 @@ namespace TakoDeployCore.Model
                         Targets.Add(target);
                     }
                 }
+
+                if (Targets == null || Targets.Count == 0) throw new InvalidOperationException("Cannot start deployment without target.");
+
                 foreach (var scriptFile in ScriptFiles)
                 {
-                    foreach (var script in scriptFile.Scripts)
+                    if (!scriptFile.IsValid)
                     {
-                        var errors = script.Validate();
-                        script.IsValid = errors == null || (errors != null && errors.Count > 0);
-                    }
-
-                    progress.Report(new ProgressEventArgs(scriptFile));
+                        throw new SqlScriptFileException(scriptFile.ScriptErrors);
+                    }                    
                 }
             }
             catch(Exception ex)
             {
+                Status = DeploymentStatus.Error;
                 progress.Report(new ProgressEventArgs(ex));
+                return ex;
             }
             await Task.Delay(100);
             progress.Report(new ProgressEventArgs("Deployment validated!"));
             
-
-            if (Targets == null || Targets.Count == 0) throw new InvalidOperationException("Cannot start deployment without target.");
-            return;
+            return null;
         }
 
         public async Task StartAsync(IProgress<ProgressEventArgs> progress)
-        {            
+        {
+            if (Status == DeploymentStatus.Error)
+            {
+                progress.Report(new ProgressEventArgs("Error, deployment not valid"));
+                return;
+            }
             
             foreach (var item in Targets)
             {
