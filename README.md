@@ -8,5 +8,21 @@ Best sql script deploy tool
 ### Read the Docs
 https://andreujuanc.github.io/TakoDeploy/
 
+### Features:
+ - Get all databases from a single instance and apply a name filter. Or just a single direct connection.
+ - Mix database sources as much as you want. Example, two direct and one full instance with or withut a filter.
+ - Script editor (Avalon Text, same monodevelop uses)
+ - Scripts are parsed and errors are detected before executing.
+ - Scripts are 'splitted' by GO statements.
+ - Save your deployment into a file
+ - Get a list of all databases before deploying.
+ - See in realtime what is happening (PRINT statements are recommended here!).
+ - Automatic rollback to independent database if any error occurs.
+ - Transparent Updates via Squirrel.
+
+## Restrictions
+ - For now only Sql Server is tested
+ - Your script cannot contain USE [database] statements
+
 ## Download the latest version
 https://github.com/andreujuanc/TakoDeploy/releases/latest
