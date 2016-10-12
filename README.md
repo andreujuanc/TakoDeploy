@@ -23,6 +23,14 @@ https://andreujuanc.github.io/TakoDeploy/
 ## Restrictions
  - For now only Sql Server is tested
  - Your script cannot contain USE [database] statements
+ 
+## TODO:
+ - Code more tests
+ - Implement more providers
+ - Options and settings?
+ - Save a document as Source Document, so no scripts are saved in it.
+ - Add more info after deployment is done.
+ - Theme selector? C:
 
 ## Download the latest version
 https://github.com/andreujuanc/TakoDeploy/releases/latest
