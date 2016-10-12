@@ -5,5 +5,13 @@
     "command": "grunt",
     "isShellCommand": true,
     "args": ["--no-color"],
-    "showOutput": "always"
+    "showOutput": "always",
+     "tasks": [
+        {
+            "taskName": "pug",
+            "args": [],
+            "isBuildCommand": true,
+            "isWatching": false
+        }
+    ]
 }

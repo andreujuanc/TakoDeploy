@@ -40,8 +40,22 @@
         .row.section
           h2.header.light Features
           .col.s12.l4
-            | TODO: list features
-      
+            h3 Features:
+              ul
+                li Get all databases from a single instance and apply a name filter. Or just a single direct connection.
+                li Mix database sources as much as you want. Example, two direct and one full instance with or withut a filter.
+                li Script editor (Avalon Text, same monodevelop uses)
+                li Scripts are parsed and errors are detected before executing.
+                li Scripts are 'splitted' by GO statements.
+                li Save your deployment into a file
+                li Get a list of all databases before deploying.
+                li See in realtime what is happening (PRINT statements are recommended here!).
+                li Automatic rollback to independent database if any error occurs.
+                li Transparent Updates via Squirrel.
+            h3 Restrictions
+              ul
+               li For now only Sql Server is tested
+               li Your script cannot contain USE [database] statements.
 
     // Table of contents
     .col.hide-on-small-only.m3.l2
