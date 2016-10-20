@@ -46,5 +46,19 @@ namespace TakoDeployWPF
             
            
         }
+
+        private void dataGrid_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
+        {
+            if (e.PropertyName == "Context")
+                e.Cancel = true;
+            if (e.PropertyName == "ConnectionString")
+                e.Cancel = true;
+            if (e.PropertyName == "ProviderName")
+                e.Cancel = true;
+            if (e.PropertyName == "Messages")
+                e.Cancel = true;
+            if (e.PropertyName == "State")
+                e.Cancel = true;
+        }
     }
 }

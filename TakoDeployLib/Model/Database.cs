@@ -24,20 +24,19 @@ namespace TakoDeployCore.Model
                     //var task = factory.GetDbContextAsync(ProviderName, ConnectionString);
                     //_context = task.Result;
                     _context = factory.GetDbContext(ProviderName, ConnectionString);
-                    _context.InfoMessage += _context_InfoMessage;
+                    _context.InfoMessage += (sender, e) => { OnInfoMessage(sender, e); }; // this is sexy
                 }
                 return _context;
             }
         }
 
-        private void _context_InfoMessage(object sender, SqlInfoMessageEventArgs e)
-        {
-            OnInfoMessage(sender, e);
-        }
         public virtual void OnInfoMessage(object sender, SqlInfoMessageEventArgs e) { }
 
         private string _deploymentStatus = null;
         public string DeploymentStatus { get { return _deploymentStatus; } internal set { SetField(ref _deploymentStatus, value); } }
+
+        private int _state = 0;
+        public int State { get { return _state; } internal set { SetField(ref _state, value); } }
 
         private string _name;
         public string Name { get { return _name; } set { SetField(ref _name, value); } }
