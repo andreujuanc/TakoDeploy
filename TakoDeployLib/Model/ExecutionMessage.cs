@@ -48,32 +48,32 @@ namespace TakoDeployLib.Model
 
         private string GetMessage()
         {
-            if (IsError)
+
+            if (SqlError != null)
             {
-                if (SqlError != null)
+                return SqlError.Message;
+            }
+            else if (Exception != null)
+            {
+                if (Exception is DeploymentException)
                 {
-                    return SqlError.Message;
-                }
-                else if (Exception != null)
-                {
-                    if (Exception is DeploymentException)
-                    {
-                        return ((DeploymentException)Exception).Message;
-                    }
-                    else
-                    {
-                        return Exception.Message;
-                    }
+                    return ((DeploymentException)Exception).Message;
                 }
                 else
                 {
-                    return "Error not captured by tako.";
+                    return Exception.Message;
                 }
             }
-            else
+            else if (_message != null)
             {
                 return _message;
             }
+            else
+            {
+                return "Error not captured by tako.";
+            }
+
+
         }
     }
 }
