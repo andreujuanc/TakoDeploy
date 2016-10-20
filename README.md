@@ -17,6 +17,8 @@ https://andreujuanc.github.io/TakoDeploy/
  - Save your deployment into a file
  - Get a list of all databases before deploying.
  - See in realtime what is happening (PRINT statements are recommended here!).
+ - List of messages and errors for each database during and after validation/deployment.
+ - Link errors to files (beta).
  - Automatic rollback to independent database if any error occurs.
  - Transparent Updates via Squirrel.
 
@@ -24,12 +26,16 @@ https://andreujuanc.github.io/TakoDeploy/
  - For now only Sql Server is tested
  - Your script cannot contain USE [database] statements
  
+## Special Thanks
+ - We are using [Material Design In XAML Toolkit](https://github.com/ButchersBoy/MaterialDesignInXamlToolkit). The best WPF toolkit out there!
+ 
 ## TODO:
  - Code more tests
  - Implement more providers
  - Options and settings?
  - Save a document as Source Document, so no scripts are saved in it.
  - Add more info after deployment is done.
+ - Cancel validation/deployment.
  - Theme selector? C:
 
 ## Download the latest version
