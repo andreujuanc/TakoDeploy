@@ -1,19 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Text;
 using System.Threading.Tasks;
 using TakoDeployCore.DataContext;
+using TakoDeployLib.Model;
 
 namespace TakoDeployCore.Model
 {
     public class TargetDatabase : Database, INotifyPropertyChanged
     {
 
-        public int ID { get; internal set; }        
-        
+        public int ID { get; internal set; }
+
+        private string _executionTime = null;
+        public string ExecutionTime { get { return _executionTime; } internal set { SetField(ref _executionTime, value); } }
+        public ObservableCollection<string> Messages { get; set; } = new ObservableCollection<string>();
+        public string LastMessage { get { return Messages.Count > 0 ? Messages[Messages.Count - 1] : ""; } }
+
         public string Server
         {
             get
@@ -54,7 +61,16 @@ namespace TakoDeployCore.Model
             Name = name;
             ConnectionString = connectionString;
             ProviderName = providerName;
+
+            Messages.CollectionChanged += Messages_CollectionChanged;
         }
+
+        private void Messages_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            OnPropertyChanged("Messages");
+            OnPropertyChanged("LastMessage");            
+        }
+
         public TargetDatabase(int id, string name, string connectionString, string providerName, string changeDatabaseTo) :this(id, name, connectionString, providerName)
         {
             var builder  = new SqlConnectionStringBuilder(connectionString);
@@ -95,7 +111,7 @@ namespace TakoDeployCore.Model
             if (e == null) return;
             if (e.Message != null)
             {
-                DeploymentStatus = e.Message;
+                Messages.Add(e.Message);
             }
             if (e.Errors != null)
             {
@@ -103,7 +119,7 @@ namespace TakoDeployCore.Model
                 {
                     if (error is SqlError)
                     {
-                        DeploymentStatus = ((SqlError)error).Message;
+                        Messages.Add(((SqlError)error).Message);
                     }
                 }
             }

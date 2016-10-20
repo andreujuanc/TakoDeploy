@@ -19,7 +19,7 @@ namespace TakoDeployWPF.Misc
 
         private static DateTime _lastUpdateCheckDateTime = DateTime.Now - TimeSpan.FromDays(1);
         private UpdateManager UpdateManager;
-        private string updatepath = @"C:\Users\andre\Source\Repos\TakoDeploy\Squirrel\Releases";
+        //private string updatepath = @"C:\Users\andre\Source\Repos\TakoDeploy\Squirrel\Releases";
 
         public Updater()
         {
@@ -28,15 +28,16 @@ namespace TakoDeployWPF.Misc
 
         internal async Task Start(Action onFirstRun)
         {
+
 #if !DEBUG
-            //updatepath = await GetWebUrlBase();
-            await RunSquirrelUpdater(onFirstRun);
+            var updatePath = await GetWebUrlBase();
+            await RunSquirrelUpdater(onFirstRun, updatePath);
 #endif
         }
 
-        private async Task RunSquirrelUpdater(Action onFirstRun)
+        private async Task RunSquirrelUpdater(Action onFirstRun, string updatePath)
         {
-            UpdateManager = new UpdateManager(updatepath);
+            UpdateManager = new UpdateManager(updatePath);
 
             //SquirrelAwareApp.HandleEvents(
             //    onFirstRun: onFirstRun

@@ -7,7 +7,27 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid >
-        <DataGrid x:Name="dataGrid" AutoGenerateColumns="true" ItemsSource="{Binding}" Background="WhiteSmoke" />
+        <DataGrid x:Name="dataGrid" 
+                  AutoGenerateColumns="true" 
+                  AutoGeneratingColumn="dataGrid_AutoGeneratingColumn"
+                  ItemsSource="{Binding}" 
+                  Background="WhiteSmoke" >
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding State}" Value="0">
+                            <Setter Property="Background" Value="Transparent"></Setter>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding State}" Value="1">
+                            <Setter Property="Background" Value="LightGreen"></Setter>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding State}" Value="2">
+                            <Setter Property="Background" Value="LightPink"></Setter>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.RowStyle>
+        </DataGrid>
 
     </Grid>
 </UserControl>

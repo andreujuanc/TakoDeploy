@@ -9,13 +9,15 @@ namespace TakoDeployCore
 {
     public class TakoDeploy
     {
+        Action<ProgressEventArgs> OnProgress;
+
         private IDeployment Deployment { get; set; }
 
         public TakoDeploy(IDeployment deployment)
         {
             Deployment = deployment;
         }
-        Action<ProgressEventArgs> OnProgress;
+        
         public async Task BeginDeploy(Action<ProgressEventArgs> onProgress)
         {
             try

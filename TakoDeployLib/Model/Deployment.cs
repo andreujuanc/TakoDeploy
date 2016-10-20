@@ -120,10 +120,13 @@ namespace TakoDeployCore.Model
         {
             var start = DateTime.Now;
             target.DeploymentStatus = "Starting..";
+            target.ExecutionTime = "";
+            target.State = 0;
             await DeployToTarget(target, ScriptFiles, progress);
             
             var result =  (int)(DateTime.Now - start).TotalMilliseconds;
-            target.DeploymentStatus = "Done in: " + result.ToString() + "ms";
+            target.ExecutionTime = result.ToString() + "ms";
+
             OnProgress(target, progress);
         }
 
@@ -138,11 +141,14 @@ namespace TakoDeployCore.Model
                 {
                     await target.DeployAsync(scriptFiles);
                     target.DeploymentStatus = "Success";
+                    target.State = 1;
                     OnProgress(target, progress);
                 }
                 catch (Exception ex)
                 {
-                    target.DeploymentStatus = ex.Message;
+                    target.Messages.Add(ex.Message);
+                    target.DeploymentStatus = "Error";
+                    target.State = 2;
                     OnProgress(target, progress);
                 }
             }
