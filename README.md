@@ -17,6 +17,8 @@ https://andreujuanc.github.io/TakoDeploy/
  - Save your deployment into a file
  - Get a list of all databases before deploying.
  - See in realtime what is happening (PRINT statements are recommended here!).
+ - List of messages and errors for each database during and after validation/deployment.
+ - Link errors to files (beta).
  - Automatic rollback to independent database if any error occurs.
  - Transparent Updates via Squirrel.
 
@@ -33,6 +35,7 @@ https://andreujuanc.github.io/TakoDeploy/
  - Options and settings?
  - Save a document as Source Document, so no scripts are saved in it.
  - Add more info after deployment is done.
+ - Cancel validation/deployment.
  - Theme selector? C:
 
 ## Download the latest version
