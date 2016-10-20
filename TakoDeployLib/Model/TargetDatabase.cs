@@ -18,8 +18,8 @@ namespace TakoDeployCore.Model
 
         private string _executionTime = null;
         public string ExecutionTime { get { return _executionTime; } internal set { SetField(ref _executionTime, value); } }
-        public ObservableCollection<string> Messages { get; set; } = new ObservableCollection<string>();
-        public string LastMessage { get { return Messages.Count > 0 ? Messages[Messages.Count - 1] : ""; } }
+        public ObservableCollection<ExecutionMessage> Messages { get; set; } = new ObservableCollection<ExecutionMessage>();
+        public string LastMessage { get { return Messages.Count > 0 ? Messages[Messages.Count - 1]?.Message : ""; } }
 
         public string Server
         {
@@ -82,13 +82,17 @@ namespace TakoDeployCore.Model
 
         internal async Task DeployAsync(IEnumerable<SqlScriptFile> scriptFiles)
         {
+            SqlScriptFile currentFile = null;
+            SqlScriptContent currentContent = null;
             try
             {
                 this.Context.BeginTransaction();
                 foreach (var scriptFile in scriptFiles)
                 {
+                    currentFile = scriptFile;
                     foreach (var script in scriptFile.Scripts)
                     {
+                        currentContent = script;
                         await Context.ExecuteNonQueryAsync(script.Content);
                     }                    
                 }
@@ -97,7 +101,7 @@ namespace TakoDeployCore.Model
             catch(Exception ex)
             {
                 this.Context.RollbackTransaction();
-                throw ex;
+                throw new DeploymentException("Deployment error", ex, currentFile, currentContent);
             }
             finally
             {
@@ -109,20 +113,21 @@ namespace TakoDeployCore.Model
         public override void OnInfoMessage(object sender, SqlInfoMessageEventArgs e)
         {
             if (e == null) return;
-            if (e.Message != null)
-            {
-                Messages.Add(e.Message);
-            }
             if (e.Errors != null)
             {
                 foreach (object error in e.Errors)
                 {
                     if (error is SqlError)
                     {
-                        Messages.Add(((SqlError)error).Message);
+                        Messages.Add(new ExecutionMessage((SqlError)error));
                     }
                 }
             }
+            else if (e.Message != null)
+            {
+                Messages.Add(new ExecutionMessage(e.Message));
+            }
+            
         }
     }
 }

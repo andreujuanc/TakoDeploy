@@ -59,11 +59,8 @@ namespace TakoDeployCore.Model
             try
             {
                 foreach (var source in Sources)
-                {
-                    if (source.Targets.Count == 0)
-                    {
-                        await source.PopulateTargets();
-                    }
+                {                   
+                    await source.PopulateTargets(); //Clear and populate
 
                     foreach (var target in source.Targets)
                     {
@@ -146,7 +143,7 @@ namespace TakoDeployCore.Model
                 }
                 catch (Exception ex)
                 {
-                    target.Messages.Add(ex.Message);
+                    target.Messages.Add(new ExecutionMessage(ex));
                     target.DeploymentStatus = "Error";
                     target.State = 2;
                     OnProgress(target, progress);

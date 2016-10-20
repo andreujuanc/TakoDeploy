@@ -50,22 +50,30 @@ namespace TakoDeployCore.Model
             }
             else if (Type == SourceType.DataSource)
             {
-                var result = await this.TryConnect();
-                if (result)
+                try
                 {
-                    var databases = await this.Context.ExecuteAsync("SELECT * FROM sys.databases");
-                    if (databases != null)
+                    var result = await this.TryConnect();
+                    if (result)
                     {
-                        foreach (var db in databases)
+                        var databases = await this.Context.ExecuteAsync("SELECT * FROM sys.databases");
+                        if (databases != null)
                         {
-                            string name = db.name as string;
-                            if (name == null) return;
-                            if (!string.IsNullOrEmpty(NameFilter) && !name.Contains(NameFilter)) continue;
+                            foreach (var db in databases)
+                            {
+                                string name = db.name as string;
+                                if (name == null) return;
+                                if (!string.IsNullOrEmpty(NameFilter) && !name.Contains(NameFilter)) continue;
 
-                            var target = new TargetDatabase(Targets.Count + 1, Name, ConnectionString, ProviderName, name);
-                            Targets.Add(target);
+                                var target = new TargetDatabase(Targets.Count + 1, Name, ConnectionString, ProviderName, name);
+                                Targets.Add(target);
+                            }
                         }
                     }
+                }
+                finally
+                {
+                    if(Context != null)
+                        Context.FinishConnection();
                 }
             }
             else

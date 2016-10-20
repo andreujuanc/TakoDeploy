@@ -70,6 +70,8 @@
     <Compile Include="Model\BindingOperations.cs" />
     <Compile Include="Model\Database.cs" />
     <Compile Include="Model\Deployment.cs" />
+    <Compile Include="Model\DeploymentException.cs" />
+    <Compile Include="Model\ExecutionMessage.cs" />
     <Compile Include="Model\IDeployment.cs" />
     <Compile Include="Model\Notifier.cs" />
     <Compile Include="Model\Observable.cs" />
