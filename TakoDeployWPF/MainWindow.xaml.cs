@@ -1,5 +1,4 @@
-﻿using Squirrel;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -21,7 +20,6 @@ using System.Windows.Shapes;
 using TakoDeployCore;
 using TakoDeployCore.Model;
 using TakoDeployWPF.Domain;
-using TakoDeployWPF.Misc;
 
 namespace TakoDeployWPF
 {
@@ -31,7 +29,7 @@ namespace TakoDeployWPF
     public partial class MainWindow : Window
     {
         public MainViewModel DataContextModel { get { return DataContext as MainViewModel; } }
-        public readonly Updater updater = new Updater();
+        //public readonly Updater updater = new Updater();
         public MainWindow()
         {
             InitializeComponent();
@@ -46,7 +44,7 @@ namespace TakoDeployWPF
 
         private void CurrentDomain_ProcessExit(object sender, EventArgs e)
         {
-            updater.DisposeUpdateManager(sender, e);
+            
         }
 
 
@@ -57,8 +55,7 @@ namespace TakoDeployWPF
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            await updater.Start(onFirstRun: () => DataContextModel.ShowTheWelcomeWizard = true);
-
+            //DataContextModel.ShowTheWelcomeWizard = true;
             // ItemToContextMenuConverter.FirstLevelContextMenu = this.Resources["FirstLevelContextMenu"] as ContextMenu;
             //  ItemToContextMenuConverter.SecondLevelContextMenu = this.Resources["SecondLevelContextMenu"] as ContextMenu;
         }
