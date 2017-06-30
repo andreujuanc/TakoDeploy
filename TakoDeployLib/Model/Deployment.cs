@@ -98,8 +98,8 @@ namespace TakoDeployCore.Model
                 progress.Report(new ProgressEventArgs("Error, deployment not valid"));
                 return;
             }
-            
-            foreach (var item in Targets)
+            Parallel.ForEach(Targets, async (item) =>
+            //foreach (var item in Targets)
             {
                 await OnEachTarget(progress, item);
 #if DEBUG
@@ -107,7 +107,8 @@ namespace TakoDeployCore.Model
 #else
                 await Task.Delay(20);
 #endif
-            }
+            });
+
             //var tasks = Targets.Select(async item => await OnEachTarget(progress, item));
             //await Task.WhenAll(tasks);
             return;
