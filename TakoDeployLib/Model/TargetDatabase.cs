@@ -55,6 +55,11 @@ namespace TakoDeployCore.Model
             }
         }
 
+        public TargetDatabase()
+        {
+        }
+
+       
         public TargetDatabase(int id, string name, string connectionString, string providerName)
         {
             ID = id;
@@ -65,18 +70,20 @@ namespace TakoDeployCore.Model
             Messages.CollectionChanged += Messages_CollectionChanged;
         }
 
+        public TargetDatabase(int id, string name, string connectionString, string providerName, string changeDatabaseTo) : this(id, name, connectionString, providerName)
+        {
+            var builder = new SqlConnectionStringBuilder(connectionString);
+            builder.InitialCatalog = changeDatabaseTo;
+            ConnectionString = builder.ToString();
+        }
+
         private void Messages_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             OnPropertyChanged("Messages");
             OnPropertyChanged("LastMessage");            
         }
-
-        public TargetDatabase(int id, string name, string connectionString, string providerName, string changeDatabaseTo) :this(id, name, connectionString, providerName)
-        {
-            var builder  = new SqlConnectionStringBuilder(connectionString);
-            builder.InitialCatalog = changeDatabaseTo;
-            ConnectionString = builder.ToString();
-        }
+        //this constructor is for file deserialization to work.
+     
 
 
 
