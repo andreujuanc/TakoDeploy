@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>TakoDeploy</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script>
+    // Monaco uses a custom amd loader that over-rides node's require.
+    // Keep a reference to node's require so we can restore it after executing the amd loader file.
+    var nodeRequire = global.require;
+  </script>
+  <script src="node_modules/monaco-editor/min/vs/loader.js"></script>
+  <script>
+    // Save Monaco's amd require and restore Node's require
+    window.amdRequire = global.require;
+    global.require = nodeRequire;
+  </script>
+
+  <link rel="stylesheet" href="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-js/1.4.0/css/fabric.min.css" />
+  <link rel="stylesheet" href="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-js/1.4.0/css/fabric.components.min.css"  />
+  <script src="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-js/1.4.0/js/fabric.min.js"></script>
+
+  <style>
+    body,
+    html,
+    .ms-Grid,
+    .ms-Grid-row,
+    .ms-Grid-col {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      overflow: hidden;
+    }
+
+
+    .ms-CommandBar {
+      -webkit-user-select: none;
+      -webkit-app-region: drag;
+    }
+
+    .ms-CommandButton {
+      -webkit-app-region: no-drag;
+    }
+
+    .takodocument-source {
+      border-bottom: 1px solid #a6a6a6;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      position: relative;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="ms-Grid">
+    <div class="ms-Grid-row">
+      <div class="ms-Grid-col ms-u-sm6 ms-u-md4 ms-u-lg4 ms-bgColor-neutralPrimary">
+        <div class="ms-CommandBar">
+          <!--<div class="ms-CommandBar-sideCommands" style="min-width:initial">
+            <span class="ms-font-m ms-fontColor-themePrimary" style="line-height: 38px;">TakoDeploy</span>
+          </div>-->
+
+          <div class="ms-CommandBar-mainArea">
+
+            <div class="ms-CommandButton">
+              <button class="ms-CommandButton-button" onclick="location.reload()">
+                <span class="ms-CommandButton-icon ms-fontColor-themePrimary"><i class="ms-Icon ms-Icon--Document"></i></span>
+                <span class="ms-CommandButton-label">New</span>
+            </button>
+            </div>
+
+            <div class="ms-CommandButton">
+              <button class="ms-CommandButton-button" onclick="opendocument()">
+                <span class="ms-CommandButton-icon ms-fontColor-themePrimary"><i class="ms-Icon ms-Icon--OpenFolderHorizontal"></i></span>
+                <span class="ms-CommandButton-label">Open</span>
+              </button>
+            </div>
+
+            <div class="ms-CommandButton">
+              <button class="ms-CommandButton-button">
+                <span class="ms-CommandButton-icon ms-fontColor-themePrimary"><i class="ms-Icon ms-Icon--Save"></i></span>
+                <span class="ms-CommandButton-label">Save</span>
+            </button>
+            </div>
+
+          </div>
+        </div>
+        <div class="takodocument ms-fontColor-neutralLighter">
+          <div class="takodocument-source data">
+            <div class="takodocument-source-header  ">
+              Data Sources
+            </div>
+            <ul class="">
+              <li class="" tabindex="0">
+                <span class="ms-fontColor-neutralLighter">Test 1</span>
+              </li>
+              <li class="" tabindex="0">
+                <span class="ms-fontColor-neutralLighter">Test 2</span>
+              </li>
+            </ul>
+          </div>
+          <div class="takodocument-source files">
+            <div class="takodocument-source-header">
+              Files
+            </div>
+            <ul class="">
+              <li class="" tabindex="0">
+                <span class="ms-fontColor-neutralLighter">Test 1</span>
+              </li>
+              <li class="" tabindex="0">
+                <span class="ms-fontColor-neutralLighter">Test 2</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="ms-Grid-col ms-u-sm6 ms-u-md8 ms-u-lg8 ms-bgColor-neutralTertiary">
+        <div class="ms-u-slideRightIn10">
+          <div class="ms-CommandBar ms-CommandBar--navBar">
+            <div class="ms-CommandBar-sideCommands">
+
+              <div class="ms-CommandButton ms-CommandButton--noLabel">
+                <button class="ms-CommandButton-button">
+                  <span class="ms-CommandButton-icon ms-fontColor-themePrimary"><i class="ms-Icon ms-Icon--ChromeMinimize"></i></span> 
+                  <span class="ms-CommandButton-label"></span> 
+                </button>
+              </div>
+              <div class="ms-CommandButton ms-CommandButton--noLabel">
+                <button class="ms-CommandButton-button">
+                  <span class="ms-CommandButton-icon ms-fontColor-themePrimary"><i class="ms-Icon ms-Icon--Checkbox"></i></span> 
+                  <span class="ms-CommandButton-label"></span> 
+                </button>
+              </div>
+              <div class="ms-CommandButton ms-CommandButton--noLabel">
+                <button class="ms-CommandButton-button">
+                  <span class="ms-CommandButton-icon ms-fontColor-themePrimary"><i class="ms-Icon ms-Icon--ChromeClose"></i></span> 
+                  <span class="ms-CommandButton-label"></span> 
+                </button>
+              </div>
+
+            </div>
+            <div class="ms-CommandBar-mainArea">
+              <div class="ms-CommandButton ms-CommandButton--pivot is-active">
+                <a class="ms-CommandButton-button"> <span class="ms-CommandButton-label" >AlterTables.sql</span>  </a>
+              </div>
+              <div class="ms-CommandButton ms-CommandButton--pivot">
+                <a class="ms-CommandButton-button"> <span class="ms-CommandButton-label">Inserts.sql</span>  </a>
+              </div>
+              <div class="ms-CommandButton ms-CommandButton--pivot">
+                <a class="ms-CommandButton-button"> <span class="ms-CommandButton-label">Updates.sql</span>  </a>
+              </div>
+              <div class="ms-CommandButton ms-CommandButton--pivot">
+                <a class="ms-CommandButton-button"> <span class="ms-CommandButton-label">DeleteOldData.sql</span>  </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="editorcontainer" style="height:calc(100% - 40px);">
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</body>
+
+<script>
+    var ipc = require('electron').ipcRenderer;
+    window.onerror = function (error, url, line) {
+      ipc.send('errorInWindow', error);
+    };
+    // You can also require other files to run in this process
+    function test1() {
+      var renderer = require('./renderer.js');
+      renderer.test()
+    }
+
+    function opendocument(){
+      const {dialog} = require('electron').remote;
+      console.log(dialog.showOpenDialog({properties: ['openFile', 'openDirectory', 'multiSelections']}))
+    }
+
+    var CommandBarElements = document.querySelectorAll(".ms-CommandBar");
+    for (var i = 0; i < CommandBarElements.length; i++) {
+      new fabric['CommandBar'](CommandBarElements[i]);
+    }
+
+</script>
+
+<script>
+    // require node modules before loader.js comes in
+    var path = require('path');
+    function uriFromPath(_path) {
+      var pathName = path.resolve(_path).replace(/\\/g, '/');
+      if (pathName.length > 0 && pathName.charAt(0) !== '/') {
+        pathName = '/' + pathName;
+      }
+      return encodeURI('file://' + pathName);
+    }
+    amdRequire.config({
+      baseUrl: uriFromPath(path.join(__dirname, 'node_modules/monaco-editor/min'))
+    });
+    // workaround monaco-css not understanding the environment
+    self.module = undefined;
+    // workaround monaco-typescript not understanding the environment
+    self.process.browser = true;
+    amdRequire(['vs/editor/editor.main'], function () {
+      window.editor = monaco.editor.create(document.getElementById('editorcontainer'), {
+        value: [
+          'SELECT *',
+          'FROM dbo.Potatoes',
+          'WHERE id = 3'
+        ].join('\n'),
+        language: 'sql',
+        scrollBeyondLastLine: false
+      });
+      window.addEventListener('change', () => editor.layout())
+      window.addEventListener('resize', () => editor.layout())
+    });
+
+</script>
+
+</html>

@@ -1,0 +1,125 @@
+<div class="ms-Grid">
+    <div class="ms-Grid-row">
+        <div class="ms-Grid-col ms-u-sm6 ms-u-md4 ms-u-lg4 ms-bgColor-neutralPrimary">
+            <div class="ms-CommandBar">
+                <!--<div class="ms-CommandBar-sideCommands" style="min-width:initial">
+            <span class="ms-font-m ms-fontColor-themePrimary" style="line-height: 38px;">TakoDeploy</span>
+          </div>-->
+
+                <div class="ms-CommandBar-mainArea">
+
+                    <div class="ms-CommandButton">
+                        <button class="ms-CommandButton-button" on-click="@.newDocument()" >
+                            <span class="ms-CommandButton-icon ms-fontColor-themePrimary"><i class="ms-Icon ms-Icon--Document"></i></span>
+                            <span class="ms-CommandButton-label">New</span>
+                        </button>
+                    </div>
+
+                    <div class="ms-CommandButton">
+                        <button class="ms-CommandButton-button" on-click="@.showOpenDocument()">
+                            <span class="ms-CommandButton-icon ms-fontColor-themePrimary"><i class="ms-Icon ms-Icon--OpenFolderHorizontal"></i></span>
+                            <span class="ms-CommandButton-label">Open</span>
+                        </button>
+                    </div>
+
+                    <div class="ms-CommandButton">
+                        <button class="ms-CommandButton-button" onclick="location.reload()">
+                            <span class="ms-CommandButton-icon ms-fontColor-themePrimary"><i class="ms-Icon ms-Icon--Save"></i></span>
+                            <span class="ms-CommandButton-label">Save</span>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+            <div class="takodocument ms-fontColor-neutralLighter">
+                <div>
+                    <h3>
+                        {{#if document}}
+                            {{#if document.CurrentFileName}}
+                                {{document.CurrentFileName}} {{#if document.IsModified}}*{{/if}}
+                            {{else}}
+                                Untitled-1 {{#if document.IsModified}}*{{/if}}
+                            {{/if}}
+                        {{else}}
+                            Click on New to create a new Document
+                        {{/if}}
+                    </h3>
+                    <button on-click="@.validate()">
+                        Validate =>
+                    </button>
+                </div>
+                <div class="takodocument-source data">
+                    <div class="takodocument-source-header">
+                        Data Sources
+                        <button on-click="@.addSource()">+</button>
+                    </div>
+                    <ul class="">
+                        {{#each document.Deployment.Sources}}
+                        <li class="" tabindex="0">
+                            <span class="ms-fontColor-neutralLighter">{{Name}}</span>
+                        </li>
+                        {{/each}}
+                    </ul>
+                </div>
+                <div class="takodocument-source files">
+                    <div class="takodocument-source-header">
+                        Files
+                    </div>
+                    <ul class="">
+                        <li class="" tabindex="0">
+                            <span class="ms-fontColor-neutralLighter">Test 1</span>
+                        </li>
+                        <li class="" tabindex="0">
+                            <span class="ms-fontColor-neutralLighter">Test 2</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="ms-Grid-col ms-u-sm6 ms-u-md8 ms-u-lg8 ms-bgColor-neutralTertiary">
+            <div class="ms-u-slideRightIn10">
+                <div class="ms-CommandBar ms-CommandBar--navBar">
+                    <div class="ms-CommandBar-sideCommands">
+
+                        <div class="ms-CommandButton ms-CommandButton--noLabel">
+                            <button class="ms-CommandButton-button">
+                  <span class="ms-CommandButton-icon ms-fontColor-themePrimary"><i class="ms-Icon ms-Icon--ChromeMinimize"></i></span> 
+                  <span class="ms-CommandButton-label"></span> 
+                </button>
+                        </div>
+                        <div class="ms-CommandButton ms-CommandButton--noLabel">
+                            <button class="ms-CommandButton-button">
+                  <span class="ms-CommandButton-icon ms-fontColor-themePrimary"><i class="ms-Icon ms-Icon--Checkbox"></i></span> 
+                  <span class="ms-CommandButton-label"></span> 
+                </button>
+                        </div>
+                        <div class="ms-CommandButton ms-CommandButton--noLabel">
+                            <button class="ms-CommandButton-button">
+                  <span class="ms-CommandButton-icon ms-fontColor-themePrimary"><i class="ms-Icon ms-Icon--ChromeClose"></i></span> 
+                  <span class="ms-CommandButton-label"></span> 
+                </button>
+                        </div>
+
+                    </div>
+                    <div class="ms-CommandBar-mainArea">
+                        <div class="ms-CommandButton ms-CommandButton--pivot is-active">
+                            <a class="ms-CommandButton-button"> <span class="ms-CommandButton-label" >AlterTables.sql</span>  </a>
+                        </div>
+                        <div class="ms-CommandButton ms-CommandButton--pivot">
+                            <a class="ms-CommandButton-button"> <span class="ms-CommandButton-label">Inserts.sql</span>  </a>
+                        </div>
+                        <div class="ms-CommandButton ms-CommandButton--pivot">
+                            <a class="ms-CommandButton-button"> <span class="ms-CommandButton-label">Updates.sql</span>  </a>
+                        </div>
+                        <div class="ms-CommandButton ms-CommandButton--pivot">
+                            <a class="ms-CommandButton-button"> <span class="ms-CommandButton-label">DeleteOldData.sql</span>  </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="editorcontainer" style="height:calc(100% - 40px);">
+
+            </div>
+        </div>
+    </div>
+</div>
