@@ -21,6 +21,7 @@ https://andreujuanc.github.io/TakoDeploy/
  - Link errors to files (beta).
  - Automatic rollback to independent database if any error occurs.
  - Transparent Updates via Squirrel.
+ - Cancel validation/deployment.
 
 ## Restrictions
  - For now only Sql Server is tested
@@ -35,7 +36,6 @@ https://andreujuanc.github.io/TakoDeploy/
  - Options and settings?
  - Save a document as Source Document, so no scripts are saved in it.
  - Add more info after deployment is done.
- - Cancel validation/deployment.
  - Theme selector? C:
 
 ## Download the latest version
