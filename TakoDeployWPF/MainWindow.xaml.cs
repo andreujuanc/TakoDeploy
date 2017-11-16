@@ -156,6 +156,7 @@ namespace TakoDeployWPF
             }
         }
 
+
         public bool ShowTheWelcomeWizard
         {
             set
