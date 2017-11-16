@@ -71,6 +71,18 @@
             <TextBlock HorizontalAlignment="Left" Margin="300,25,0,25" Grid.Column="1" Text="{Binding DeploymentMessage}" VerticalAlignment="Center">
 
             </TextBlock>
+            <Button x:Name="btnStop" HorizontalAlignment="Right" Margin="0,25,25,25" 
+                Style="{DynamicResource MaterialDesignRaisedAccentButton}"
+                Command="{Binding RunStopDeployCommand}"
+                Visibility="{Binding IsCancelButtonVisible }"
+                VerticalAlignment="Stretch" Width="135" Height="50" Grid.Column="1" >
+                <WrapPanel >
+                    <TextBlock VerticalAlignment="Center" >
+                    Stop
+                    </TextBlock>
+                    <materialDesign:PackIcon Kind="Stop" Height="24" Width="24" Margin="10, 0, 0, 0"  />
+                </WrapPanel>
+            </Button>
 
             <StackPanel  Background="{DynamicResource PrimaryHueDarkBrush}" Grid.Row="1" Grid.ColumnSpan="1"  Grid.RowSpan="2" >
                 <Grid  Margin="10, 10, 0, 0" >

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using TakoDeployCore.Model;
 using TakoDeployLib.Model;
@@ -12,6 +13,7 @@ namespace TakoDeployCore
         Action<ProgressEventArgs> OnProgress;
 
         private IDeployment Deployment { get; set; }
+        private CancellationTokenSource CTS;
 
         public TakoDeploy(IDeployment deployment)
         {
@@ -23,6 +25,7 @@ namespace TakoDeployCore
             try
             {
                 var startTime = DateTime.Now;
+                CTS = new CancellationTokenSource();
                 OnProgress = onProgress;
                 //FIX: Maybe move status management inside Deployment implementation?
                 Deployment.Status = DeploymentStatus.Running;
@@ -31,15 +34,24 @@ namespace TakoDeployCore
                 var progress = new Progress<ProgressEventArgs>(OnProgress);
                 //await Task.Factory.StartNew(() => Deployment.StartAsync(progress));
                 OnProgress(new ProgressEventArgs(string.Format("Deploying...")));
-                await Deployment.StartAsync(progress);
+                await Deployment.StartAsync(progress, CTS.Token);
                 Deployment.Status = DeploymentStatus.Idle;
                 var deploymentTime = (DateTime.Now - startTime).TotalSeconds;
                 OnProgress(new ProgressEventArgs(string.Format("Deployed successfully in {0:0.00} seconds", deploymentTime)));
             }
-            catch(Exception ex)
+            catch (OperationCanceledException ex)
+            {
+                Deployment.Status = DeploymentStatus.Cancelled;
+                onProgress(new ProgressEventArgs("Cancelled"));
+            }
+            catch (Exception ex)
             {
                 Deployment.Status = DeploymentStatus.Error;
                 onProgress(new ProgressEventArgs(ex));
+            }
+            finally
+            {
+                CTS = null;
             }
         }
 
@@ -71,6 +83,11 @@ namespace TakoDeployCore
                 onProgress(new ProgressEventArgs(ex));
                 return ex;
             }
+        }
+
+        public void Stop()
+        {
+            CTS?.Cancel();
         }
     }
 }

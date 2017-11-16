@@ -64,7 +64,7 @@ namespace TakoDeployCore.Model
 
                     foreach (var target in source.Targets)
                     {
-                        target.DeploymentStatus = "";
+                        target.DeploymentStatusMessage = "";
                         Targets.Add(target);
                     }
                 }
@@ -91,66 +91,78 @@ namespace TakoDeployCore.Model
             return null;
         }
 
-        public async Task StartAsync(IProgress<ProgressEventArgs> progress)
+        public async Task StartAsync(IProgress<ProgressEventArgs> progress, CancellationToken ct)
         {
             if (Status == DeploymentStatus.Error)
             {
                 progress.Report(new ProgressEventArgs("Error, deployment not valid"));
                 return;
             }
-            Parallel.ForEach(Targets, async (item) =>
-            //foreach (var item in Targets)
-            {
-                await OnEachTarget(progress, item);
-#if DEBUG
-                await Task.Delay(50);
-#else
-                await Task.Delay(20);
-#endif
-            });
 
-            //var tasks = Targets.Select(async item => await OnEachTarget(progress, item));
-            //await Task.WhenAll(tasks);
-            return;
+            var downloadTasksQuery = from target in Targets select OnEachTarget(progress, target, ct);
+            var downloadTasks = downloadTasksQuery.ToList();
+
+            while (downloadTasks.Count > 0)
+            {
+                var firstFinishedTask = await Task.WhenAny(downloadTasks);
+                downloadTasks.Remove(firstFinishedTask);
+                await firstFinishedTask;
+            }
+
+            ct.ThrowIfCancellationRequested();
         }
         
-        private async Task OnEachTarget(IProgress<ProgressEventArgs> progress, TargetDatabase target)
-        {
-            var start = DateTime.Now;
-            target.DeploymentStatus = "Starting..";
-            target.ExecutionTime = "";
-            target.State = 0;
-            await DeployToTarget(target, ScriptFiles, progress);
-            
-            var result =  (int)(DateTime.Now - start).TotalMilliseconds;
-            target.ExecutionTime = result.ToString() + "ms";
 
-            OnProgress(target, progress);
+        private Task OnEachTarget(IProgress<ProgressEventArgs> progress, TargetDatabase target, CancellationToken ct)
+        {
+            return Task.Run(async () =>
+            {
+                var start = DateTime.Now;
+                target.DeploymentStatusMessage = "Starting..";
+                target.ExecutionTime = "";
+                target.DeploymentState = Database.DatabaseDeploymentState.Starting;
+                await DeployToTarget(target, ScriptFiles, progress, ct);
+
+                var result = (int)(DateTime.Now - start).TotalMilliseconds;
+                target.ExecutionTime = result.ToString() + "ms";
+
+                await Task.Delay(1);
+
+                OnProgress(target, progress);
+            }, ct);
+
         }
 
-        private async Task DeployToTarget(TargetDatabase target, IEnumerable<SqlScriptFile> scriptFiles, IProgress<ProgressEventArgs> progress)
+        private async Task DeployToTarget(TargetDatabase target, IEnumerable<SqlScriptFile> scriptFiles, IProgress<ProgressEventArgs> progress, CancellationToken ct)
         {
-            target.DeploymentStatus = "Initiating connection...";
+            target.DeploymentStatusMessage = "Initiating connection...";
             var couldOpen = await target.TryConnect();
-            target.DeploymentStatus = "Connected!";
             if (couldOpen)
             {
+                target.DeploymentStatusMessage = "Connected!";
                 try
                 {
-                    await target.DeployAsync(scriptFiles);
-                    target.DeploymentStatus = "Success";
-                    target.State = 1;
+                    await target.DeployAsync(scriptFiles, ct);
+                    target.DeploymentStatusMessage = "Success";
+                    target.DeploymentState = Database.DatabaseDeploymentState.Success;
+                    OnProgress(target, progress);
+                }
+                catch (OperationCanceledException ex)
+                {
+                    //Deployment.Status = DeploymentStatus.Cancelled;
+                    target.Messages.Add(new ExecutionMessage(ex));
+                    target.DeploymentStatusMessage = "Cancelled";
+                    target.DeploymentState = Database.DatabaseDeploymentState.Cancelled;
                     OnProgress(target, progress);
                 }
                 catch (Exception ex)
                 {
                     target.Messages.Add(new ExecutionMessage(ex));
-                    target.DeploymentStatus = "Error";
-                    target.State = 2;
+                    target.DeploymentStatusMessage = "Error";
+                    target.DeploymentState = Database.DatabaseDeploymentState.Error;
                     OnProgress(target, progress);
                 }
             }
-            return;
         }
 
         private static void OnProgress(TargetDatabase target, IProgress<ProgressEventArgs> progress)

@@ -75,6 +75,7 @@
     <Compile Include="Model\IDeployment.cs" />
     <Compile Include="Model\Notifier.cs" />
     <Compile Include="Model\Observable.cs" />
+    <Compile Include="Model\ParallelExtensions.cs" />
     <Compile Include="Model\ProgressEventArgs.cs" />
     <Compile Include="Model\SourceDatabase.cs" />
     <Compile Include="Model\SqlScript.cs" />

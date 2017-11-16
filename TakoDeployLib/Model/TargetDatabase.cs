@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using TakoDeployCore.DataContext;
 using TakoDeployLib.Model;
@@ -87,8 +88,9 @@ namespace TakoDeployCore.Model
 
 
 
-        internal async Task DeployAsync(IEnumerable<SqlScriptFile> scriptFiles)
+        internal async Task DeployAsync(IEnumerable<SqlScriptFile> scriptFiles, CancellationToken ct)
         {
+            if (ct.IsCancellationRequested) return;
             SqlScriptFile currentFile = null;
             SqlScriptContent currentContent = null;
             try
@@ -100,14 +102,20 @@ namespace TakoDeployCore.Model
                     foreach (var script in scriptFile.Scripts)
                     {
                         currentContent = script;
-                        await Context.ExecuteNonQueryAsync(script.Content);
+                        await Context.ExecuteNonQueryAsync(script.Content, ct);
                     }                    
                 }
                 this.Context.CommitTransaction();
             }
-            catch(Exception ex)
+            catch (OperationCanceledException ex)
             {
-                this.Context.RollbackTransaction();
+                this.Context?.RollbackTransaction();
+                throw ex;
+            }
+            catch (Exception ex)
+            {
+                this.Context?.RollbackTransaction();
+                ThrowIfSqlClientCancellationRequested(ct, ex);
                 throw new DeploymentException("Deployment error", ex, currentFile, currentContent);
             }
             finally
@@ -115,6 +123,28 @@ namespace TakoDeployCore.Model
                 this.Context.FinishConnection();
             }
             return;
+        }
+
+        void ThrowIfSqlClientCancellationRequested(CancellationToken cancellationToken, Exception exception)
+        {
+            // Check the CancellationToken, as suggested by Anton S in his answer
+            if (!cancellationToken.IsCancellationRequested)
+                return;
+            var sqlException = exception as SqlException;
+            if (sqlException == null)
+            {
+                var aggregateException = exception as AggregateException;
+                if ( aggregateException != null)
+                    sqlException = aggregateException.InnerException as System.Data.SqlClient.SqlException;
+                if (sqlException != null)
+                    return;
+            }
+            // Assume that if it's a "real" problem (e.g. the query is malformed),
+            // then this will be a number != 0, typically from the "sysmessages"
+            // system table 
+            if (sqlException.Number != 0)
+                return;
+            throw new OperationCanceledException();
         }
 
         public override void OnInfoMessage(object sender, SqlInfoMessageEventArgs e)

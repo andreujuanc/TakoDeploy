@@ -33,10 +33,19 @@ namespace TakoDeployCore.Model
         public virtual void OnInfoMessage(object sender, SqlInfoMessageEventArgs e) { }
 
         private string _deploymentStatus = null;
-        public string DeploymentStatus { get { return _deploymentStatus; } internal set { SetField(ref _deploymentStatus, value); } }
+        public string DeploymentStatusMessage { get { return _deploymentStatus; } internal set { SetField(ref _deploymentStatus, value); } }
 
-        private int _state = 0;
-        public int State { get { return _state; } internal set { SetField(ref _state, value); } }
+        private DatabaseDeploymentState _state = 0;
+        public DatabaseDeploymentState DeploymentState { get { return _state; } internal set { SetField(ref _state, value); } }
+
+        public enum DatabaseDeploymentState
+        {
+            Idle = 0,
+            Starting , 
+            Success,
+            Error ,
+            Cancelled 
+        }
 
         private string _name;
         public string Name { get { return _name; } set { SetField(ref _name, value); } }
@@ -55,7 +64,7 @@ namespace TakoDeployCore.Model
             }
             catch (Exception ex)
             {
-                DeploymentStatus = (ex.InnerException?? ex)?.Message; //OH YEA
+                DeploymentStatusMessage = (ex.InnerException?? ex)?.Message; //OH YEA
             }
             return result;
         }

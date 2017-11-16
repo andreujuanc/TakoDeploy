@@ -109,6 +109,10 @@ namespace TakoDeployWPF
         public ICommand RunValidateCommand => new ButtonCommand(ExecuteValidate, CanExecuteValidation);
         public ICommand RunDeployCommand => new ButtonCommand(ExecuteRunDeployCommand, CanExecuteDeployment);
 
+        public ICommand RunStopDeployCommand => new ButtonCommand(ExecuteStopDeployCommand, CanExecuteStopDeployment);
+
+        
+
         public ICommand RunEditSelectedItemCommand => new ButtonCommand(ExecuteEditSelectedItemCommand, IsTreeItemSelected);
         public ICommand RunDeleteSelectedItemCommand => new ButtonCommand(ExecuteDeleteSelectedItemCommand, IsTreeItemSelected);
 
@@ -141,6 +145,14 @@ namespace TakoDeployWPF
             {
                 _windowSize = value;
                 OnPropertyChanged("WindowSize");
+            }
+        }
+
+        public bool IsCancelButtonVisible
+        {
+            get
+            {
+                return CanExecuteStopDeployment(null);
             }
         }
 
@@ -344,6 +356,11 @@ namespace TakoDeployWPF
             await DocumentManager.Current.Deploy();
         }
 
+        private async void ExecuteStopDeployCommand(object o)
+        {
+            await DocumentManager.Current.Stop();
+        }
+
         private bool IsTreeItemSelected(object o)
         {
             if (!DocumentIsPresent) return false;
@@ -376,6 +393,14 @@ namespace TakoDeployWPF
         {
             if (!DocumentIsPresent) return false;
             if (DeploymentIsRunning) return false;
+            return true;
+        }
+
+        private bool CanExecuteStopDeployment(object o)
+        {
+            if (!DocumentIsPresent) return false;
+            //if (!DocumentManager.Current.IsModified) return false;
+            if (!DeploymentIsRunning) return false;
             return true;
         }
 

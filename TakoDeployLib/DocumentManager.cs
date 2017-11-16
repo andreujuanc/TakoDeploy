@@ -33,6 +33,9 @@ namespace TakoDeployCore
                 OnNewDocument?.Invoke(_current, new EventArgs());
             }
         }
+
+        public TakoDeploy TakoDeploy { get; private set; }
+
         public string CurrentFileName { get; set; }
         public bool IsModified { get; set; }
         public IDeployment Deployment { get; private set; }
@@ -50,8 +53,14 @@ namespace TakoDeployCore
             }
             else
             {
-                await new TakoDeploy(this.Deployment).BeginDeploy(e => DeploymentEvent?.Invoke(this, e));
+                TakoDeploy = new TakoDeploy(this.Deployment);
+                await TakoDeploy.BeginDeploy(e => DeploymentEvent?.Invoke(this, e));
             }
+        }
+        public async Task Stop()
+        {
+            if (this.Deployment.Status != DeploymentStatus.Running) return;
+            TakoDeploy?.Stop();
         }
 
         public async Task Validate()
@@ -62,7 +71,8 @@ namespace TakoDeployCore
             }
             else
             {
-                await new TakoDeploy(this.Deployment).ValidateDeploy(e => DeploymentEvent?.Invoke(this, e));
+                TakoDeploy = new TakoDeploy(this.Deployment);
+                await TakoDeploy.ValidateDeploy(e => DeploymentEvent?.Invoke(this, e));
             }
         }
 

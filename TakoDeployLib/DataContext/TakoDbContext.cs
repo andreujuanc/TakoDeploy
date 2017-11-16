@@ -5,6 +5,7 @@ using System.Data.Common;
 using System.Threading.Tasks;
 using Dapper;
 using System.Data.SqlClient;
+using System.Threading;
 
 namespace TakoDeployCore.DataContext
 {
@@ -56,7 +57,7 @@ namespace TakoDeployCore.DataContext
             return this.Connection.State == System.Data.ConnectionState.Open;
         }
 
-        internal async Task ExecuteNonQueryAsync(string script)
+        internal async Task ExecuteNonQueryAsync(string script, CancellationToken ct)
         {
             using (var command = this.Connection.CreateCommand())
             {
@@ -65,7 +66,7 @@ namespace TakoDeployCore.DataContext
                 
                 command.CommandType = System.Data.CommandType.Text;
                 command.Prepare();
-                await command.ExecuteNonQueryAsync();
+                await command.ExecuteNonQueryAsync(ct);
             }
         }
 
