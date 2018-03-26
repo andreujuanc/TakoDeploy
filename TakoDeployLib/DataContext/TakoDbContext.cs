@@ -57,13 +57,13 @@ namespace TakoDeployCore.DataContext
             return this.Connection.State == System.Data.ConnectionState.Open;
         }
 
-        internal async Task ExecuteNonQueryAsync(string script, CancellationToken ct)
+        internal async Task ExecuteNonQueryAsync(string script, int commandTimeout, CancellationToken ct)
         {
             using (var command = this.Connection.CreateCommand())
             {
                 command.Transaction = Transaction;
                 command.CommandText = script;
-                
+                command.CommandTimeout = commandTimeout;
                 command.CommandType = System.Data.CommandType.Text;
                 command.Prepare();
                 await command.ExecuteNonQueryAsync(ct);

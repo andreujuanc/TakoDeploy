@@ -56,27 +56,31 @@ namespace TakoDeployCore.Model
             }
         }
 
+        public int CommandTimeout { get; }
+
         public TargetDatabase()
         {
         }
 
        
-        public TargetDatabase(int id, string name, string connectionString, string providerName)
+        public TargetDatabase(int id, string name, string connectionString, string providerName, int commandTimeout)
         {
             ID = id;
             Name = name;
             ConnectionString = connectionString;
             ProviderName = providerName;
-
+            CommandTimeout = commandTimeout;
             Messages.CollectionChanged += Messages_CollectionChanged;
         }
 
-        public TargetDatabase(int id, string name, string connectionString, string providerName, string changeDatabaseTo) : this(id, name, connectionString, providerName)
+        public TargetDatabase(int id, string name, string connectionString, string providerName, int commandTimeout, string changeDatabaseTo) : this(id, name, connectionString, providerName, commandTimeout)
         {
             var builder = new SqlConnectionStringBuilder(connectionString);
             builder.InitialCatalog = changeDatabaseTo;
             ConnectionString = builder.ToString();
         }
+
+    
 
         private void Messages_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
@@ -102,7 +106,7 @@ namespace TakoDeployCore.Model
                     foreach (var script in scriptFile.Scripts)
                     {
                         currentContent = script;
-                        await Context.ExecuteNonQueryAsync(script.Content, ct);
+                        await Context.ExecuteNonQueryAsync(script.Content, CommandTimeout, ct);
                     }                    
                 }
                 this.Context.CommitTransaction();

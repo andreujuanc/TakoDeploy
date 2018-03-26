@@ -23,7 +23,7 @@ namespace TakoDeployXUnit.Deployment
         }
 
         [Fact]
-        public async void Deploy()
+        public async Task Deploy()
         {
             DocumentManager.Current.DeploymentEvent += (a, b) => 
             {
@@ -47,6 +47,53 @@ namespace TakoDeployXUnit.Deployment
                     Assert.True(false);
             }
             Assert.True(true);
+        }
+
+        [Fact]
+        public async Task CommandTimeout_Pass()
+        {  
+            PrepareForTimeout_4SecondExecutionQuery(5);
+
+            await DocumentManager.Current.Deploy();
+
+            Assert.Equal(Database.DatabaseDeploymentState.Success,
+                DocumentManager.Current.Deployment.Targets.First().DeploymentState);
+        }
+
+        [Fact]
+        public async Task CommandTimeout_Fail()
+        {
+            PrepareForTimeout_4SecondExecutionQuery(3);
+
+            await DocumentManager.Current.Deploy();
+
+            Assert.Equal(Database.DatabaseDeploymentState.Error,
+                DocumentManager.Current.Deployment.Targets.First().DeploymentState);
+
+        }
+
+        private void PrepareForTimeout_4SecondExecutionQuery(int timeoutSeconds)
+        {
+            DocumentManager.Current.Deployment.ScriptFiles.Clear();
+            DocumentManager.Current.Deployment.ScriptFiles.Add(
+                new TakoDeployCore.Model.SqlScriptFile()
+                {
+                    Content = @"
+                            PRINT 'Waiting'
+                            WAITFOR DELAY '00:00:4';
+                            PRINT 'ok'
+                    "
+                });
+            DocumentManager.Current.Deployment.Sources.Clear();
+            DocumentManager.Current.Deployment.Sources.Add(
+                new TakoDeployCore.Model.SourceDatabase()
+                {
+                    ConnectionString = DBF.ConnectionString,
+                    ProviderName = DBF.ProviderName,
+                    Type = SourceType.Direct,
+                    CommandTimeout = timeoutSeconds
+                }
+            );
         }
 
         private int? GetTableCount(TargetDatabase target)

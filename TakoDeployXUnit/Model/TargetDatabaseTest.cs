@@ -20,7 +20,7 @@ namespace TakoDeployXUnit.Model
 
         private TargetDatabase CreateTarget()
         {
-            return new TargetDatabase(1, "Test", DBF.ConnectionString, DBF.ProviderName, DBF.Databases[0]);
+            return new TargetDatabase(1, "Test", DBF.ConnectionString, DBF.ProviderName, 10, DBF.Databases[0]);
         }
 
         [Fact]

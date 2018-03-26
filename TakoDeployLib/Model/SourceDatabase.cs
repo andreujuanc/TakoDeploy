@@ -22,11 +22,12 @@ namespace TakoDeployCore.Model
 
         public void CopyFrom(SourceDatabase original)
         {
-            this.Name = original.Name;
-            this.ConnectionString = original.ConnectionString;
-            this.ProviderName = original.ProviderName;
-            this.Type = original.Type;
-            this.NameFilter = original.NameFilter;
+            Name = original.Name;
+            ConnectionString = original.ConnectionString;
+            ProviderName = original.ProviderName;
+            Type = original.Type;
+            NameFilter = original.NameFilter;
+            CommandTimeout = original.CommandTimeout;
         }
 
         public ObservableCollection<TargetDatabase> Targets { get; } = new ObservableCollection<TargetDatabase>();
@@ -38,14 +39,14 @@ namespace TakoDeployCore.Model
         }
 
         public string NameFilter { get; set; }
-
+        public int CommandTimeout { get; set; }
 
         public async Task PopulateTargets()
         {
             Targets.Clear();
             if (Type == SourceType.Direct)
             {
-                var target = new TargetDatabase(Targets.Count + 1, Name, ConnectionString, ProviderName);
+                var target = new TargetDatabase(Targets.Count + 1, Name, ConnectionString, ProviderName, CommandTimeout);
                 Targets.Add(target);
             }
             else if (Type == SourceType.DataSource)
@@ -64,7 +65,7 @@ namespace TakoDeployCore.Model
                                 if (name == null) return;
                                 if (!string.IsNullOrEmpty(NameFilter) && !name.Contains(NameFilter)) continue;
 
-                                var target = new TargetDatabase(Targets.Count + 1, Name, ConnectionString, ProviderName, name);
+                                var target = new TargetDatabase(Targets.Count + 1, Name, ConnectionString, ProviderName, CommandTimeout, name);
                                 Targets.Add(target);
                             }
                         }
