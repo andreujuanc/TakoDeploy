@@ -22,6 +22,7 @@
             <RowDefinition />
             <RowDefinition />
             <RowDefinition />
+            <RowDefinition />
         </Grid.RowDefinitions>
         <TextBlock VerticalAlignment="Center" FontSize="24">New Source:</TextBlock>
         <TextBox wpf:HintAssist.Hint="Name"
@@ -53,11 +54,17 @@
                   FontSize="16"
                   ItemsSource="{Binding TypeItems}"  >
         </ComboBox>
+        <TextBox wpf:HintAssist.Hint="Command timeout" 
+                 Text="{Binding Source.CommandTimeout}"
+                 Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                 Margin="0 8 0 0"
+                 FontSize="16" Grid.Row="4"
+                 />
         <TextBox wpf:HintAssist.Hint="Filter" 
                  Text="{Binding Source.NameFilter}"
                  Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
                  Margin="0 8 0 0"
-                 FontSize="16" Grid.Row="4"
+                 FontSize="16" Grid.Row="5"
                  />
         <TextBox wpf:HintAssist.Hint="Connecion String" 
                  TextWrapping="Wrap"
@@ -65,7 +72,7 @@
                  VerticalScrollBarVisibility="Auto"
                  Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
                  Margin="0 8 20 0"
-                 FontSize="16" Grid.Row="5" Grid.RowSpan="2"
+                 FontSize="16" Grid.Row="6" Grid.RowSpan="2"
                  >
             <TextBox.Text>
                 <Binding Path="Source.ConnectionString" UpdateSourceTrigger="PropertyChanged" Mode="TwoWay" >
@@ -75,7 +82,7 @@
                 </Binding>
             </TextBox.Text>
         </TextBox>
-        <Button Grid.Row="6" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="30" Height="30" 
+        <Button Grid.Row="7" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="30" Height="30" 
                 Style="{StaticResource MaterialDesignRaisedButton}" 
                 Margin="0,0,0,4" Padding="0,0,0,0" 
                 Command="{Binding RunEditConnectionString}"
@@ -83,7 +90,7 @@
             <materialDesign:PackIcon Kind="PencilBox" Height="24" Width="24" Margin="0, 0, 0, 0" />
         </Button>
 
-        <StackPanel Orientation="Horizontal" Grid.Row="8"
+        <StackPanel Orientation="Horizontal" Grid.Row="9"
                     Margin="0 16 0 0">
             <Button IsDefault="True" Style="{DynamicResource MaterialDesignFlatButton}"
                     Command="{x:Static wpf:DialogHost.CloseDialogCommand}">

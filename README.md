@@ -24,12 +24,12 @@ https://andreujuanc.github.io/TakoDeploy/
  - Cancel validation/deployment.
 
 ## Restrictions
- - For now only Sql Server is tested
- - Your script cannot contain USE [database] statements
+ - For now only Sql Server is tested and supported
+ - Your scripts cannot contain USE [database] statements
  
 ## Special Thanks
  - We are using [Material Design In XAML Toolkit](https://github.com/ButchersBoy/MaterialDesignInXamlToolkit). The best WPF toolkit out there!
- 
+
 ## TODO:
  - Code more tests
  - Implement more providers
