@@ -61,16 +61,18 @@ namespace TakoDeployWPF
 
         private void grid_rowDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            
-            var messages = ((TakoDeployCore.Model.TargetDatabase)((System.Windows.FrameworkElement)sender).DataContext).Messages;
-            BindingOperations.EnableCollectionSynchronization(messages, _lock2);
-            gridMessages.DataContext = messages;
-            ViewModel.MessagesState = true;
+            if (((System.Windows.FrameworkElement)sender).DataContext is TakoDeployCore.Model.TargetDatabase target && target != null)
+            {
+                var messages = target.Messages;
+                BindingOperations.EnableCollectionSynchronization(messages, _lock2);
+                gridMessages.DataContext = messages;
+                ViewModel.MessagesState = true;
+            }
         }
 
         private void dataGrid_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
         {
-            var exclude = new string[] { "Context", "ConnectionString", "ProviderName", "Messages", "State" };
+            var exclude = new string[] { "Context", "ConnectionString", "ProviderName", "Messages", "DeploymentState" };
             e.Cancel =  exclude.Contains(e.PropertyName);
         }
 

@@ -26,20 +26,28 @@
                   AutoGenerateColumns="true" 
                   AutoGeneratingColumn="dataGrid_AutoGeneratingColumn"
                   ItemsSource="{Binding}" 
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False"
                   Background="WhiteSmoke">
             <DataGrid.RowStyle>
                 <Style TargetType="DataGridRow">
                     <EventSetter Event="MouseDoubleClick" Handler="grid_rowDoubleClick"/>
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding State}" Value="0">
+                        <DataTrigger Binding="{Binding DeploymentState}" Value="Idle">
                             <Setter Property="Background" Value="Transparent"></Setter>
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding State}" Value="1">
+                        <DataTrigger Binding="{Binding DeploymentState}" Value="Starting">
+                            <Setter Property="Background" Value="LightBlue"></Setter>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding DeploymentState}" Value="Success">
                             <Setter Property="Background" Value="LightGreen"></Setter>
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding State}" Value="2">
+                        <DataTrigger Binding="{Binding DeploymentState}" Value="Error">
                             <Setter Property="Background" Value="LightPink"></Setter>
                         </DataTrigger>
+                        <DataTrigger Binding="{Binding DeploymentState}" Value="Cancelled">
+                            <Setter Property="Background" Value="LightPink"></Setter>
+                        </DataTrigger>                        
                     </Style.Triggers>
                 </Style>
             </DataGrid.RowStyle>
