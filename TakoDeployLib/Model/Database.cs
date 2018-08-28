@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.SqlClient;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using TakoDeployCore.DataContext;
 
@@ -53,12 +54,12 @@ namespace TakoDeployCore.Model
         public string ConnectionString { get; set; }
         public string ProviderName { get; set; }
 
-        public async Task<bool> TryConnect()
+        public async Task<bool> TryConnect(CancellationToken ct)
         {
             var result = false;
             try
             { 
-                await Context.OpenAsync(ConnectionString);
+                await Context.OpenAsync(ConnectionString, ct);
                 result = Context.IsOpen();
                 //Context.FinishConnection();
             }

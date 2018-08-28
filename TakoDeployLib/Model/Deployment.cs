@@ -52,6 +52,14 @@ namespace TakoDeployCore.Model
 
         public async Task<Exception> ValidateAsync(IProgress<ProgressEventArgs> progress)
         {
+            Targets.Select(x => {
+                try
+                {
+                    x.Dispose();
+                }
+                catch { }
+                return x;
+            });
             Targets.Clear();
 
             
@@ -65,6 +73,7 @@ namespace TakoDeployCore.Model
                     foreach (var target in source.Targets)
                     {
                         target.DeploymentStatusMessage = "";
+                        //await target.TryConnect(CancellationToken.None);
                         Targets.Add(target);
                     }
                 }
@@ -82,11 +91,11 @@ namespace TakoDeployCore.Model
             catch(Exception ex)
             {
                 Status = DeploymentStatus.Error;
-                progress.Report(new ProgressEventArgs(ex));
+                progress?.Report(new ProgressEventArgs(ex));
                 return ex;
             }
             await Task.Delay(100);
-            progress.Report(new ProgressEventArgs("Deployment validated!"));
+            progress?.Report(new ProgressEventArgs("Deployment validated!"));
             
             return null;
         }
@@ -95,54 +104,59 @@ namespace TakoDeployCore.Model
         {
             if (Status == DeploymentStatus.Error)
             {
-                progress.Report(new ProgressEventArgs("Error, deployment not valid"));
+                progress?.Report(new ProgressEventArgs("Error, deployment not valid"));
                 return;
             }
 
-            var downloadTasksQuery = from target in Targets select OnEachTarget(progress, target, ct);
-            var downloadTasks = downloadTasksQuery.ToList();
+            var targetsTasks = 
+                Targets
+                .AsParallel()
+                .Select(async (target) => 
+                         await OnEachTarget(progress, target, ct)
+                );
 
-            while (downloadTasks.Count > 0)
-            {
-                var firstFinishedTask = await Task.WhenAny(downloadTasks);
-                downloadTasks.Remove(firstFinishedTask);
-                await firstFinishedTask;
-            }
+            await Task.WhenAll(targetsTasks).ConfigureAwait(false);
 
             ct.ThrowIfCancellationRequested();
+            if (Targets.Where(x => x.DeploymentState != Database.DatabaseDeploymentState.Success).Count() > 0)
+                Status = DeploymentStatus.Error;
+            else
+                Status = DeploymentStatus.Idle;
         }
         
 
-        private Task OnEachTarget(IProgress<ProgressEventArgs> progress, TargetDatabase target, CancellationToken ct)
+        private async Task OnEachTarget(IProgress<ProgressEventArgs> progress, TargetDatabase target, CancellationToken ct)
         {
-            return Task.Run(async () =>
-            {
+           // await Task.Run(async () =>
+          //  {
                 var start = DateTime.Now;
                 target.DeploymentStatusMessage = "Starting..";
                 target.ExecutionTime = "";
                 target.DeploymentState = Database.DatabaseDeploymentState.Starting;
-                await DeployToTarget(target, ScriptFiles, progress, ct);
+
+                await DeployToTarget(target, ScriptFiles, progress, ct).ConfigureAwait(false);
 
                 var result = (int)(DateTime.Now - start).TotalMilliseconds;
                 target.ExecutionTime = result.ToString() + "ms";
 
-                await Task.Delay(1);
+                //await Task.Delay(1);
 
                 OnProgress(target, progress);
-            }, ct);
+
+           // }, ct);
 
         }
 
         private async Task DeployToTarget(TargetDatabase target, IEnumerable<SqlScriptFile> scriptFiles, IProgress<ProgressEventArgs> progress, CancellationToken ct)
         {
             target.DeploymentStatusMessage = "Initiating connection...";
-            var couldOpen = await target.TryConnect();
+            var couldOpen = await target.TryConnect(ct).ConfigureAwait(false);
             if (couldOpen)
             {
                 target.DeploymentStatusMessage = "Connected!";
                 try
                 {
-                    await target.DeployAsync(scriptFiles, ct);
+                    await target.DeployAsync(scriptFiles, ct).ConfigureAwait(false);
                     target.DeploymentStatusMessage = "Success";
                     target.DeploymentState = Database.DatabaseDeploymentState.Success;
                     OnProgress(target, progress);
@@ -162,6 +176,15 @@ namespace TakoDeployCore.Model
                     target.DeploymentState = Database.DatabaseDeploymentState.Error;
                     OnProgress(target, progress);
                 }
+                finally
+                {
+                    target?.Dispose();
+                }
+            }
+            else
+            {
+                target.DeploymentState = Database.DatabaseDeploymentState.Error;
+                OnProgress(target, progress);
             }
         }
 

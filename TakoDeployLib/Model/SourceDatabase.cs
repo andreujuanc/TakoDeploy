@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace TakoDeployCore.Model
@@ -53,7 +54,7 @@ namespace TakoDeployCore.Model
             {
                 try
                 {
-                    var result = await this.TryConnect();
+                    var result = await this.TryConnect(CancellationToken.None);
                     if (result)
                     {
                         var databases = await this.Context.ExecuteAsync("SELECT * FROM sys.databases");

@@ -46,10 +46,10 @@ namespace TakoDeployCore.DataContext
             InfoMessage?.Invoke(sender, e);
         }
 
-        internal async Task OpenAsync(string connectionString)
+        internal async Task OpenAsync(string connectionString, CancellationToken ct)
         {
             this.Connection.ConnectionString = connectionString;
-            await this.Connection.OpenAsync();
+            await this.Connection.OpenAsync(ct);
         }
 
         internal bool IsOpen()

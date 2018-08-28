@@ -75,8 +75,17 @@ namespace TakoDeployCore.Model
 
         public TargetDatabase(int id, string name, string connectionString, string providerName, int commandTimeout, string changeDatabaseTo) : this(id, name, connectionString, providerName, commandTimeout)
         {
-            var builder = new SqlConnectionStringBuilder(connectionString);
-            builder.InitialCatalog = changeDatabaseTo;
+            var builder = new SqlConnectionStringBuilder(connectionString)
+            {
+                InitialCatalog = changeDatabaseTo,
+                ApplicationName = "TakoDeploy"//TODO set this in options?
+            };
+
+            if (builder.Pooling)
+            {
+                builder.MaxPoolSize = 100;
+                builder.MinPoolSize = 1;
+            }
             ConnectionString = builder.ToString();
         }
 

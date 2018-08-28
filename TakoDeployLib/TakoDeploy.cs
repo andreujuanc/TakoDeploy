@@ -25,17 +25,22 @@ namespace TakoDeployCore
             try
             {
                 var startTime = DateTime.Now;
-                CTS = new CancellationTokenSource();
+
                 OnProgress = onProgress;
+                var progress = new Progress<ProgressEventArgs>(OnProgress);
+
+                CTS = new CancellationTokenSource();
+                
                 //FIX: Maybe move status management inside Deployment implementation?
                 Deployment.Status = DeploymentStatus.Running;
+
                 var validationException = await ValidateDeploy(onProgress);
                 if (validationException != null) throw validationException;
-                var progress = new Progress<ProgressEventArgs>(OnProgress);
+                
                 //await Task.Factory.StartNew(() => Deployment.StartAsync(progress));
                 OnProgress(new ProgressEventArgs(string.Format("Deploying...")));
                 await Deployment.StartAsync(progress, CTS.Token);
-                Deployment.Status = DeploymentStatus.Idle;
+                
                 var deploymentTime = (DateTime.Now - startTime).TotalSeconds;
                 OnProgress(new ProgressEventArgs(string.Format("Deployed successfully in {0:0.00} seconds", deploymentTime)));
             }
