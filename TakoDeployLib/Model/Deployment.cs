@@ -150,10 +150,13 @@ namespace TakoDeployCore.Model
         private async Task DeployToTarget(TargetDatabase target, IEnumerable<SqlScriptFile> scriptFiles, IProgress<ProgressEventArgs> progress, CancellationToken ct)
         {
             target.DeploymentStatusMessage = "Initiating connection...";
+            OnProgress(target, progress);
+
             var couldOpen = await target.TryConnect(ct).ConfigureAwait(false);
             if (couldOpen)
             {
                 target.DeploymentStatusMessage = "Connected!";
+                OnProgress(target, progress);
                 try
                 {
                     await target.DeployAsync(scriptFiles, ct).ConfigureAwait(false);
