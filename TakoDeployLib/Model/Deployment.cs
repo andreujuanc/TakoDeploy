@@ -27,6 +27,9 @@ namespace TakoDeployCore.Model
         private DeploymentStatus _status;
         public DeploymentStatus Status { get { return _status; } set { SetField(ref _status, value); } }
 
+        private bool _isModified;
+        public bool IsModified { get { return _isModified; } set { SetField(ref _isModified, value); } }
+
         internal Deployment()
         {
             Targets.CollectionChanged += Targets_CollectionChanged;
@@ -72,6 +75,7 @@ namespace TakoDeployCore.Model
 
                     foreach (var target in source.Targets)
                     {
+                        target.Selected = true;
                         target.DeploymentStatusMessage = "";
                         //await target.TryConnect(CancellationToken.None);
                         Targets.Add(target);
@@ -110,6 +114,7 @@ namespace TakoDeployCore.Model
 
             var targetsTasks = 
                 Targets
+                .Where(x=>x.Selected)
                 .AsParallel()
                 .Select(async (target) => 
                          await OnEachTarget(progress, target, ct)

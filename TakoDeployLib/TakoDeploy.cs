@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -34,15 +35,19 @@ namespace TakoDeployCore
                 //FIX: Maybe move status management inside Deployment implementation?
                 Deployment.Status = DeploymentStatus.Running;
 
-                var validationException = await ValidateDeploy(onProgress);
-                if (validationException != null) throw validationException;
+                if (this.Deployment.IsModified)
+                {
+                    var validationException = await ValidateDeploy(onProgress);
+                    if (validationException != null) throw validationException;
+                }
                 
                 //await Task.Factory.StartNew(() => Deployment.StartAsync(progress));
                 OnProgress(new ProgressEventArgs(string.Format("Deploying...")));
                 await Deployment.StartAsync(progress, CTS.Token);
                 
                 var deploymentTime = (DateTime.Now - startTime).TotalSeconds;
-                OnProgress(new ProgressEventArgs(string.Format("Deployed successfully in {0:0.00} seconds", deploymentTime)));
+                var status = this.Deployment.Targets.Where(x => x.DeploymentState != Database.DatabaseDeploymentState.Success).Count() > 0 ? "with errors" : "successfully";
+                OnProgress(new ProgressEventArgs(string.Format("Deployed {1} in {0:0.00} seconds", deploymentTime, status)));
             }
             catch (OperationCanceledException ex)
             {

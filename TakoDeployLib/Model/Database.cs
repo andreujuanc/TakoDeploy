@@ -50,7 +50,10 @@ namespace TakoDeployCore.Model
 
         private string _name;
         public string Name { get { return _name; } set { SetField(ref _name, value); } }
-        
+
+        private bool _selected;
+        public bool Selected { get { return _selected; } set { SetField(ref _selected, value); } }
+
         public string ConnectionString { get; set; }
         public string ProviderName { get; set; }
 

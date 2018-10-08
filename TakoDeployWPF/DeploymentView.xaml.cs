@@ -74,6 +74,8 @@ namespace TakoDeployWPF
         {
             var exclude = new string[] { "Context", "ConnectionString", "ProviderName", "Messages", "DeploymentState" };
             e.Cancel =  exclude.Contains(e.PropertyName);
+            if (e.PropertyName == "Selected")
+                e.Column.DisplayIndex = 0;
         }
 
         private void gridMessages_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)

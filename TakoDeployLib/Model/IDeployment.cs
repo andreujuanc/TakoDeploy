@@ -19,6 +19,7 @@ namespace TakoDeployCore.Model
         ObservableCollectionEx<SourceDatabase> Sources { get; set; }
         ObservableCollectionEx<TargetDatabase> Targets { get; set; }
         ObservableCollectionEx<SqlScriptFile> ScriptFiles { get; set; }
+        bool IsModified { get; }
 
         void CallPropertyChanges();
         Task<Exception> ValidateAsync(IProgress<ProgressEventArgs> progress);

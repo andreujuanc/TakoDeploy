@@ -87,9 +87,7 @@ namespace TakoDeployCore.Model
                 builder.MinPoolSize = 1;
             }
             ConnectionString = builder.ToString();
-        }
-
-    
+        }    
 
         private void Messages_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
@@ -97,10 +95,7 @@ namespace TakoDeployCore.Model
             OnPropertyChanged("LastMessage");            
         }
         //this constructor is for file deserialization to work.
-     
-
-
-
+   
         internal async Task DeployAsync(IEnumerable<SqlScriptFile> scriptFiles, CancellationToken ct)
         {
             if (ct.IsCancellationRequested) return;
@@ -108,7 +103,7 @@ namespace TakoDeployCore.Model
             SqlScriptContent currentContent = null;
             try
             {
-                this.Context.BeginTransaction();
+                Context.BeginTransaction();
                 foreach (var scriptFile in scriptFiles)
                 {
                     currentFile = scriptFile;
@@ -118,22 +113,25 @@ namespace TakoDeployCore.Model
                         await Context.ExecuteNonQueryAsync(script.Content, CommandTimeout, ct);
                     }                    
                 }
-                this.Context.CommitTransaction();
+                
+                Context.CommitTransaction();
+                //In case more than one target fails, automaticaly deselect those who succceded so the user just have to click deploy to deploy the failed ones.
+                this.Selected = false;
             }
             catch (OperationCanceledException ex)
             {
-                this.Context?.RollbackTransaction();
+                Context?.RollbackTransaction();
                 throw ex;
             }
             catch (Exception ex)
             {
-                this.Context?.RollbackTransaction();
+                Context?.RollbackTransaction();
                 ThrowIfSqlClientCancellationRequested(ct, ex);
                 throw new DeploymentException("Deployment error", ex, currentFile, currentContent);
             }
             finally
             {
-                this.Context.FinishConnection();
+                Context.FinishConnection();
             }
             return;
         }

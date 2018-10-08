@@ -51,6 +51,7 @@
                     </Style.Triggers>
                 </Style>
             </DataGrid.RowStyle>
+          
         </DataGrid>
         <GridSplitter Grid.Row="1"  Height="5" HorizontalAlignment="Stretch" x:Name="gridSplitter" Background="{ DynamicResource PrimaryHueLightBrush }"  >
         </GridSplitter>
