@@ -31,12 +31,8 @@ https://andreujuanc.github.io/TakoDeploy/
  - We are using [Material Design In XAML Toolkit](https://github.com/ButchersBoy/MaterialDesignInXamlToolkit). The best WPF toolkit out there!
 
 ## TODO:
- - Code more tests
- - Implement more providers
- - Options and settings?
- - Save a document as Source Document, so no scripts are saved in it.
- - Add more info after deployment is done.
- - Theme selector? C:
+There is some stuff to do that will improve the project in a big way. If you are interested to see what's comming or if you want to help please check the project's board:
+ - https://github.com/andreujuanc/TakoDeploy/projects/1#column-3537715
 
 ## Download the latest version
 https://github.com/andreujuanc/TakoDeploy/releases/latest
