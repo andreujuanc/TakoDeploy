@@ -14,7 +14,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TakoDeployWPF", "TakoDeploy
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{91151FA1-C79C-41D1-9BEF-9AC6DE913AFA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TakoDeployXUnit", "TakoDeployXUnit\TakoDeployXUnit.csproj", "{C7AD1AC0-565B-407A-86D8-227B0242AAB3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TakoDeployLib.Tests", "TakoDeployXUnit\TakoDeployLib.Tests.csproj", "{C7AD1AC0-565B-407A-86D8-227B0242AAB3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationTests", "IntegrationTests\IntegrationTests.csproj", "{228DE8C0-60B4-4428-9F54-A6F47D0B3B3F}"
 EndProject

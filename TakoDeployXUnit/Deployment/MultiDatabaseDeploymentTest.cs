@@ -51,7 +51,7 @@ namespace TakoDeployXUnit.Deployment
 
         [Fact]
         public async Task CommandTimeout_Pass()
-        {  
+        {
             PrepareForTimeout_4SecondExecutionQuery(5);
 
             await DocumentManager.Current.Deploy();
@@ -64,6 +64,7 @@ namespace TakoDeployXUnit.Deployment
         public async Task CommandTimeout_Fail()
         {
             PrepareForTimeout_4SecondExecutionQuery(3);
+
 
             await DocumentManager.Current.Deploy();
 

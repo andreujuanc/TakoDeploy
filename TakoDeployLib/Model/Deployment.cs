@@ -40,16 +40,19 @@ namespace TakoDeployCore.Model
 
         private void ScriptFiles_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
+            IsModified = true;
             OnPropertyChanged("ScriptFiles");
         }
 
         private void Sources_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
+            IsModified = true;
             OnPropertyChanged("Sources");
         }
 
         private void Targets_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
+            IsModified = true;
             OnPropertyChanged("Targets");
         }
 

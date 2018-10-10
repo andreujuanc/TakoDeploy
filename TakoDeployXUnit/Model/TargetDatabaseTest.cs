@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using TakoDeployCore.Model;
 using TakoDeployXUnit.Fixtures;
@@ -10,10 +11,10 @@ using Xunit;
 namespace TakoDeployXUnit.Model
 {
     [Collection("Database collection")]
-    public class TargetDatabaseTest
+    public class TargetDatabase_Should
     {
         DatabaseFixture DBF;
-        public TargetDatabaseTest(DatabaseFixture database)
+        public TargetDatabase_Should(DatabaseFixture database)
         {
             DBF = database;
         }
@@ -24,11 +25,11 @@ namespace TakoDeployXUnit.Model
         }
 
         [Fact]
-        public async void TryConnnect()
+        public async void TryConnnectSuccessfully()
         {
             using (var target = CreateTarget())
             {
-                Assert.True(await target.TryConnect());
+                Assert.True(await target.TryConnect(CancellationToken.None));
             }
         }
     }

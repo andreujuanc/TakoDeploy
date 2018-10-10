@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using TakoDeployCore.Model;
 using TakoDeployXUnit.Fixtures;
@@ -30,7 +31,7 @@ namespace TakoDeployXUnit.Model
         {
             using (var Source = CreateSource())
             {
-                Assert.True(await Source.TryConnect());
+                Assert.True(await Source.TryConnect(CancellationToken.None));
             }
         }
 
