@@ -141,7 +141,12 @@
                     </TreeView.ItemContainerStyle>
 
                 </TreeView>
-
+                
+            </StackPanel>
+            <StackPanel VerticalAlignment="Bottom" Margin="0, 0, 0, 0" HorizontalAlignment="Left" Grid.Row="2" Grid.ColumnSpan="1" Grid.RowSpan="1" >
+                <Button Style="{DynamicResource MaterialDesignFloatingActionMiniButton}" Margin="10, 0, 0, 10"  Command="{Binding RunSettingsItemCommand}">
+                    <materialDesign:PackIcon Kind="Settings" Height="24" Width="24" />
+                </Button>
             </StackPanel>
 
         </Grid>

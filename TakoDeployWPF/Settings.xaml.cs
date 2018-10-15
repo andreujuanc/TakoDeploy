@@ -13,11 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace TakoDeployWPF.Domain
+namespace TakoDeployWPF
 {
-    public partial class WelcomeScreen : UserControl
+    /// <summary>
+    /// Interaction logic for Settings.xaml
+    /// </summary>
+    public partial class Settings : UserControl
     {
-        public WelcomeScreen()
+        public Settings()
         {
             InitializeComponent();
         }

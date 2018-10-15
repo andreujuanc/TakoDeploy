@@ -1,7 +1,7 @@
 ﻿using System.Windows;
-using Microsoft.HockeyApp;
 using System.Diagnostics;
 using System;
+using TakoDeployWPF.Telemetry;
 
 namespace TakoDeployWPF
 {
@@ -17,17 +17,25 @@ namespace TakoDeployWPF
         protected override async void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            
-            
-            Microsoft.HockeyApp.HockeyClient.Current.Configure("359448c46770498b8a9f42fe27a02965");
-#if DEBUG
-            ((HockeyClient)HockeyClient.Current).OnHockeySDKInternalException += (sender, args) =>
+            if (Guid.Empty == TakoDeployWPF.Properties.Settings.Default.AnonymousUserId)
             {
-                if (Debugger.IsAttached) { Debugger.Break(); }
-            };
-#endif
+                TakoDeployWPF.Properties.Settings.Default.AnonymousUserId = Guid.NewGuid();
+                TakoDeployWPF.Properties.Settings.Default.Save();
+            }
 
-            await HockeyClient.Current.SendCrashesAsync(true);
+            if (Guid.Empty != TakoDeployWPF.Properties.Settings.Default.AnonymousUserId)
+            {
+                AppInsightTelemetry.SetUser(TakoDeployWPF.Properties.Settings.Default.AnonymousUserId.ToString());
+            }
+
+            AppInsightTelemetry.Enabled = TakoDeployWPF.Properties.Settings.Default.EnableTelemetry;
+            AppInsightTelemetry.TrackEvent("Startup");
+        }
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            base.OnExit(e);
+            AppInsightTelemetry.Flush();
         }
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
@@ -35,7 +43,7 @@ namespace TakoDeployWPF
             var ex2 = e.ExceptionObject as Exception;
             if (ex2 == null)
                 ex2 = sender as Exception;
-            (HockeyClient.Current as HockeyClient).HandleException(ex2);
+            AppInsightTelemetry.TrackException(ex2);
         }
     }
 }

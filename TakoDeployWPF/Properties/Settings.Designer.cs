@@ -22,5 +22,29 @@ namespace TakoDeployWPF.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool EnableTelemetry {
+            get {
+                return ((bool)(this["EnableTelemetry"]));
+            }
+            set {
+                this["EnableTelemetry"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("00000000-0000-0000-0000-000000000000")]
+        public global::System.Guid AnonymousUserId {
+            get {
+                return ((global::System.Guid)(this["AnonymousUserId"]));
+            }
+            set {
+                this["AnonymousUserId"] = value;
+            }
+        }
     }
 }

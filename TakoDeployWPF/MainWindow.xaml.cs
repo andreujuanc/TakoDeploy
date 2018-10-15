@@ -97,7 +97,7 @@ namespace TakoDeployWPF
                 if (ex2.InnerException != null)
                     ex2 = ex2.InnerException;
                 MessageBox.Show(ex2.Message, "TakoDeploy Exception", MessageBoxButton.OK, MessageBoxImage.Error);
-                (Microsoft.HockeyApp.HockeyClient.Current as Microsoft.HockeyApp.HockeyClient).HandleException(ex2);
+                Telemetry.AppInsightTelemetry.TrackException(e.Exception);
             }
             if(e.Message != null)
                 DeploymentMessage = e.Message;
@@ -119,6 +119,8 @@ namespace TakoDeployWPF
         public ICommand RunNewDocumentCommand => new ButtonCommand(ExecuteNewDocumentCommand);
         public ICommand RunOpenDocumentCommand => new ButtonCommand(ExecuteOpenDocumentCommand);
         public ICommand RunSaveDocumentCommand => new ButtonCommand(ExecuteSaveDocumentCommand, CanExecuteGenericButton);
+  
+        public ICommand RunSettingsItemCommand => new ButtonCommand(ExecuteSettingsItemCommand, CanExecuteSettingsItemCommand);
 
         public List<object> TreeViewData
         {
@@ -337,6 +339,37 @@ namespace TakoDeployWPF
             //DocumentManager.Save();
         }
 
+        private async void ExecuteSettingsItemCommand(object o)
+        {
+            var VM = new SettingsViewModel()
+            {
+                EnableTelemetry = Properties.Settings.Default.EnableTelemetry
+            };
+
+            var view = new Settings
+            {
+                DataContext = VM
+            };
+
+            view.MinWidth = WindowSize.Width * 0.20;
+            view.MinHeight = WindowSize.Height * 0.20;
+
+            var result = await MaterialDesignThemes.Wpf.DialogHost.Show(view, "RootDialog", ClosingEventHandler);
+            if (result is bool)
+            {
+                if ((bool)result)
+                {
+                    Properties.Settings.Default.EnableTelemetry = VM.EnableTelemetry;
+                    Properties.Settings.Default.Save();
+                }
+                else
+                {
+                    Properties.Settings.Default.Reset();
+                }
+                //check the result...
+                //Console.WriteLine("Dialog was closed, the CommandParameter used to close it was: " + (result ?? "NULL"));
+            }
+        }
         private async void ExecuteValidate(object o)
         {
             await DocumentManager.Current.Validate();
@@ -402,6 +435,11 @@ namespace TakoDeployWPF
             if (!DocumentIsPresent) return false;
             //if (!DocumentManager.Current.IsModified) return false;
             if (!DeploymentIsRunning) return false;
+            return true;
+        }
+
+        private bool CanExecuteSettingsItemCommand(object o)
+        {
             return true;
         }
 
