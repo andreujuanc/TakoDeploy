@@ -35,7 +35,6 @@ namespace TakoDeployCore.Model
             Targets.CollectionChanged += Targets_CollectionChanged;
             Sources.CollectionChanged += Sources_CollectionChanged;
             ScriptFiles.CollectionChanged += ScriptFiles_CollectionChanged;
-
         }
 
         private void ScriptFiles_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
