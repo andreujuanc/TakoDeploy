@@ -53,9 +53,15 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Dockerfile" />
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\TakoDeploy.Core\TakoDeploy.Core.csproj">
+      <Project>{f1f41eb2-2a84-4399-b8ba-15b558da6fe1}</Project>
+      <Name>TakoDeploy.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TakoDeployLib\TakoDeployLib.csproj">
       <Project>{7E7105D9-EDE6-41FA-8E53-8AE3ED9403E6}</Project>
       <Name>TakoDeployLib</Name>

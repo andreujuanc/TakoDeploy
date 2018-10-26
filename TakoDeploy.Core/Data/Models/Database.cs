@@ -6,14 +6,17 @@ using System.Data.SqlClient;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using TakoDeployCore.DataContext;
+using TakoDeploy.Core.Data.Context;
+using TakoDeploy.Core.Data;
+using TakoDeploy.Core.Model;
 
-namespace TakoDeployCore.Model
+namespace TakoDeploy.Core.Model
 {
     public abstract class Database : Notifier, IDisposable
     {
 
         private TakoDbContext _context = null;
+
         [JsonIgnore]
         public TakoDbContext Context
         {
@@ -24,14 +27,14 @@ namespace TakoDeployCore.Model
                     var factory = new TakoConnectionFactory();
                     //var task = factory.GetDbContextAsync(ProviderName, ConnectionString);
                     //_context = task.Result;
-                    _context = factory.GetDbContext(ProviderName, ConnectionString);
+                    _context = factory.GetDbContext(ProviderType, ConnectionString);
                     _context.InfoMessage += (sender, e) => { OnInfoMessage(sender, e); }; // this is sexy
                 }
                 return _context;
             }
         }
 
-        public virtual void OnInfoMessage(object sender, SqlInfoMessageEventArgs e) { }
+        public virtual void OnInfoMessage(object sender, Events.DbInfoMessageEventArgs e) { }
 
         private string _deploymentStatus = null;
         public string DeploymentStatusMessage { get { return _deploymentStatus; } internal set { SetField(ref _deploymentStatus, value); } }
@@ -55,7 +58,19 @@ namespace TakoDeployCore.Model
         public bool Selected { get { return _selected; } set { SetField(ref _selected, value); } }
 
         public string ConnectionString { get; set; }
-        public string ProviderName { get; set; }
+        public Data.Context.ProviderTypes ProviderType { get; set; }
+        public string ProviderName
+        {
+            get
+            {
+                return ProviderType.ToString();
+            }
+            set
+            {
+                if(value.ToLowerInvariant() == "System.Data.SqlClient".ToLowerInvariant())
+                    ProviderType = ProviderTypes.SqlServer;
+            }
+        }
 
         public async Task<bool> TryConnect(CancellationToken ct)
         {

@@ -15,7 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using TakoDeployCore;
-using TakoDeployCore.Model;
+using TakoDeploy.Core;
 using TakoDeployLib.Model;
 
 namespace TakoDeployWPF
@@ -61,7 +61,7 @@ namespace TakoDeployWPF
 
         private void grid_rowDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (((System.Windows.FrameworkElement)sender).DataContext is TakoDeployCore.Model.TargetDatabase target && target != null)
+            if (((System.Windows.FrameworkElement)sender).DataContext is TakoDeploy.Core.Model.TargetDatabase target && target != null)
             {
                 var messages = target.Messages;
                 BindingOperations.EnableCollectionSynchronization(messages, _lock2);
@@ -109,7 +109,7 @@ namespace TakoDeployWPF
         }
     }
 
-    public class DeploymentViewViewModel: Notifier
+    public class DeploymentViewViewModel: TakoDeploy.Core.Model.Notifier
     {
         public PackIconKind MessageStateIconKind { get { return MessagesState ? PackIconKind.ArrowDown : PackIconKind.ArrowUp; } }
         private bool _messageState;

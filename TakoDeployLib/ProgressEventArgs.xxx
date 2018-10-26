@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TakoDeployCore.Model;
+using TakoDeploy.Core.Model;
+using TakoDeploy.Core.Scripts;
 
 namespace TakoDeployLib.Model
 {
@@ -27,11 +28,11 @@ namespace TakoDeployLib.Model
            Exception = ex;
         }
 
-        public ProgressEventArgs(SqlScriptFile scriptFile)
+        public ProgressEventArgs(ScriptFile scriptFile)
         {
             ScriptFile = scriptFile;
         }
-        private SqlScriptFile ScriptFile { get; }
+        private ScriptFile ScriptFile { get; }
 
         public TargetDatabase Target { get; }
         public Exception Exception { get; }

@@ -4,31 +4,32 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using TakoDeployCore.Model;
+using TakoDeploy.Core;
+using TakoDeploy.Core.Model;
 using TakoDeployLib.Model;
 
 namespace TakoDeployCore
 {
-    public class TakoDeploy
+    public class TakoDeployment
     {
-        Action<ProgressEventArgs> OnProgress;
-
-        private IDeployment Deployment { get; set; }
+        Action<DeploymentProgressEventArgs> OnProgress;
+        
+        private Deployment Deployment { get; set; }
         private CancellationTokenSource CTS;
 
-        public TakoDeploy(IDeployment deployment)
+        public TakoDeployment(Deployment deployment)
         {
             Deployment = deployment;
         }
         
-        public async Task BeginDeploy(Action<ProgressEventArgs> onProgress)
+        public async Task BeginDeploy(Action<DeploymentProgressEventArgs> onProgress)
         {
             try
             {
                 var startTime = DateTime.Now;
 
                 OnProgress = onProgress;
-                var progress = new Progress<ProgressEventArgs>(OnProgress);
+                var progress = new Progress<DeploymentProgressEventArgs>(OnProgress);
 
                 CTS = new CancellationTokenSource();
                 
@@ -42,22 +43,22 @@ namespace TakoDeployCore
                 }
                 
                 //await Task.Factory.StartNew(() => Deployment.StartAsync(progress));
-                OnProgress(new ProgressEventArgs(string.Format("Deploying...")));
+                OnProgress(new DeploymentProgressEventArgs(string.Format("Deploying...")));
                 await Deployment.StartAsync(progress, CTS.Token);
                 
                 var deploymentTime = (DateTime.Now - startTime).TotalSeconds;
                 var status = this.Deployment.Targets.Where(x => x.DeploymentState != Database.DatabaseDeploymentState.Success).Count() > 0 ? "with errors" : "successfully";
-                OnProgress(new ProgressEventArgs(string.Format("Deployed {1} in {0:0.00} seconds", deploymentTime, status)));
+                OnProgress(new DeploymentProgressEventArgs(string.Format("Deployed {1} in {0:0.00} seconds", deploymentTime, status)));
             }
             catch (OperationCanceledException ex)
             {
                 Deployment.Status = DeploymentStatus.Cancelled;
-                onProgress(new ProgressEventArgs("Cancelled"));
+                onProgress(new DeploymentProgressEventArgs("Cancelled"));
             }
             catch (Exception ex)
             {
                 Deployment.Status = DeploymentStatus.Error;
-                onProgress(new ProgressEventArgs(ex));
+                onProgress(new DeploymentProgressEventArgs(ex));
             }
             finally
             {
@@ -65,13 +66,13 @@ namespace TakoDeployCore
             }
         }
 
-        public async Task<Exception> ValidateDeploy(Action<ProgressEventArgs> onProgress)
+        public async Task<Exception> ValidateDeploy(Action<DeploymentProgressEventArgs> onProgress)
         {
             try
             {
                 OnProgress = onProgress;
-                var progress = new Progress<ProgressEventArgs>(OnProgress);
-                onProgress(new ProgressEventArgs("Validating."));
+                var progress = new Progress<DeploymentProgressEventArgs>(OnProgress);
+                onProgress(new DeploymentProgressEventArgs("Validating."));
 
                 var doStatus = Deployment.Status == DeploymentStatus.Idle;
                 
@@ -84,13 +85,13 @@ namespace TakoDeployCore
                 var exception = await Deployment.ValidateAsync(progress);
                 if (exception != null) return exception;
                 if (doStatus) Deployment.Status = DeploymentStatus.Idle;
-                OnProgress(new ProgressEventArgs());
+                OnProgress(new DeploymentProgressEventArgs());
                 return null;
             }
             catch (Exception ex)
             {
                 Deployment.Status = DeploymentStatus.Error;
-                onProgress(new ProgressEventArgs(ex));
+                onProgress(new DeploymentProgressEventArgs(ex));
                 return ex;
             }
         }

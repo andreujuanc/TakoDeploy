@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TakoDeployCore.Model;
+using TakoDeployCore;
+using TakoDeploy.Core.Scripts;
 using TakoDeployXUnit.Deployment;
 using Xunit;
 
@@ -19,7 +20,7 @@ namespace TakoDeployXUnit.Model
         [Fact]
         public void InvalidScript1()
         {
-            var content = new SqlScriptContent();
+            var content = new ScriptContent(DocumentManager.Current.GetParser());
             content.Content = ScriptManager.GetInvalidScript1();
             Assert.False(content.IsValid);
         }

@@ -1,0 +1,1 @@
+﻿FROM microsoft/dotnet-framework:4.7

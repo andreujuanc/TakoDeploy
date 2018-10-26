@@ -4,15 +4,15 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
-using TakoDeployCore.Model;
+using TakoDeploy.Core.Scripts;
 
 namespace TakoDeployCore
 {
     public class ScriptLoader
     {
-        public async Task<ObservableCollection<SqlScriptFile>> LoadFromFiles(params string[] files)
+        public async Task<ObservableCollection<ScriptFile>> LoadFromFiles(params string[] files)
         {
-            var result = new ObservableCollection<SqlScriptFile>();
+            var result = new ObservableCollection<ScriptFile>();
             foreach (var filePath in files)
             {
                 string fileContent = null;
@@ -23,7 +23,7 @@ namespace TakoDeployCore
                     fileContent = await reader.ReadToEndAsync();
                 }
 
-                result.Add(new SqlScriptFile() { Name = fileName, Content = fileContent });
+                result.Add(new ScriptFile(DocumentManager.Current.GetParser() ) { Name = fileName, Content = fileContent });
             }
             return result;
         }

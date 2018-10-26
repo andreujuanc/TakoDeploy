@@ -65,8 +65,10 @@
   <ItemGroup>
     <Compile Include="Class1.cs" />
     <Compile Include="Deployment\MultiDatabaseDeploymentTest.cs" />
+    <Compile Include="Deployment\PostgreSQLProvider.cs" />
     <Compile Include="Deployment\ScriptManager.cs" />
     <Compile Include="Fixtures\DatabaseFixture.cs" />
+    <Compile Include="Fixtures\PostgreSQLFixture.cs" />
     <Compile Include="Model\DeploymentTest.cs" />
     <Compile Include="Model\DocumentManagerTest.cs" />
     <Compile Include="Model\SourceDatabaseTest.cs" />
@@ -78,6 +80,10 @@
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\TakoDeploy.Core\TakoDeploy.Core.csproj">
+      <Project>{f1f41eb2-2a84-4399-b8ba-15b558da6fe1}</Project>
+      <Name>TakoDeploy.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TakoDeployLib\TakoDeployLib.csproj">
       <Project>{7E7105D9-EDE6-41FA-8E53-8AE3ED9403E6}</Project>
       <Name>TakoDeployLib</Name>
@@ -88,6 +94,7 @@
     <EmbeddedResource Include="TestDbScripts\InvalidScript1.sql" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

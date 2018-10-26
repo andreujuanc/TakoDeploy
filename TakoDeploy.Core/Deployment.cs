@@ -8,21 +8,22 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using TakoDeployLib.Model;
+using TakoDeploy.Core.Model;
+using TakoDeploy.Core.Scripts;
+using TakoDeploy.Core.Events;
 
-namespace TakoDeployCore.Model
+namespace TakoDeploy.Core
 {
-    public class Deployment : IDeployment
+    public class Deployment 
     {
         public int DeploymentID { get; set; }
 
-        private ObservableCollectionEx<TargetDatabase> _targets = new ObservableCollectionEx<TargetDatabase>();
-        //public string SqlSource { get { return _sqlSource; } set { SetField(ref _sqlSource, value); } }
+        private ObservableCollection<TargetDatabase> _targets = new ObservableCollection<TargetDatabase>();
 
-        public ObservableCollectionEx<SourceDatabase> Sources { get; set; } = new ObservableCollectionEx<SourceDatabase>();
+        public ObservableCollection<SourceDatabase> Sources { get; set; } = new ObservableCollection<SourceDatabase>();
 
-        //public ObservableCollectionEx<TargetDatabase> Targets { get { return _targets; } set { SetField(ref _targets, value); } }
-        public ObservableCollectionEx<TargetDatabase> Targets { get; set; } = new ObservableCollectionEx<TargetDatabase>();
-        public ObservableCollectionEx<SqlScriptFile> ScriptFiles { get; set; } = new ObservableCollectionEx<SqlScriptFile>();
+        public ObservableCollection<TargetDatabase> Targets { get; set; } = new ObservableCollection<TargetDatabase>();
+        public ObservableCollection<ScriptFile> ScriptFiles { get; set; } = new ObservableCollection<ScriptFile>();
 
         private DeploymentStatus _status;
         public DeploymentStatus Status { get { return _status; } set { SetField(ref _status, value); } }
@@ -30,7 +31,7 @@ namespace TakoDeployCore.Model
         private bool _isModified;
         public bool IsModified { get { return _isModified; } set { SetField(ref _isModified, value); } }
 
-        internal Deployment()
+        public Deployment()
         {
             Targets.CollectionChanged += Targets_CollectionChanged;
             Sources.CollectionChanged += Sources_CollectionChanged;
@@ -55,7 +56,7 @@ namespace TakoDeployCore.Model
             OnPropertyChanged("Targets");
         }
 
-        public async Task<Exception> ValidateAsync(IProgress<ProgressEventArgs> progress)
+        public async Task<Exception> ValidateAsync(IProgress<DeploymentProgressEventArgs> progress)
         {
             Targets.Select(x => {
                 try
@@ -90,27 +91,27 @@ namespace TakoDeployCore.Model
                 {
                     if (!scriptFile.IsValid)
                     {
-                        throw new SqlScriptFileException(scriptFile.ScriptErrors);
+                        throw new ScriptFileException(scriptFile.ScriptErrors);
                     }                    
                 }
             }
             catch(Exception ex)
             {
                 Status = DeploymentStatus.Error;
-                progress?.Report(new ProgressEventArgs(ex));
+                progress?.Report(new DeploymentProgressEventArgs(ex));
                 return ex;
             }
             await Task.Delay(100);
-            progress?.Report(new ProgressEventArgs("Deployment validated!"));
+            progress?.Report(new DeploymentProgressEventArgs("Deployment validated!"));
             
             return null;
         }
 
-        public async Task StartAsync(IProgress<ProgressEventArgs> progress, CancellationToken ct)
+        public async Task StartAsync(IProgress<DeploymentProgressEventArgs> progress, CancellationToken ct)
         {
             if (Status == DeploymentStatus.Error)
             {
-                progress?.Report(new ProgressEventArgs("Error, deployment not valid"));
+                progress?.Report(new DeploymentProgressEventArgs("Error, deployment not valid"));
                 return;
             }
 
@@ -125,14 +126,14 @@ namespace TakoDeployCore.Model
             await Task.WhenAll(targetsTasks).ConfigureAwait(false);
 
             ct.ThrowIfCancellationRequested();
-            if (Targets.Where(x => x.DeploymentState != Database.DatabaseDeploymentState.Success).Count() > 0)
+            if (Targets.Where(x => x.DeploymentState != TakoDeploy.Core.Model.Database.DatabaseDeploymentState.Success).Count() > 0)
                 Status = DeploymentStatus.Error;
             else
                 Status = DeploymentStatus.Idle;
         }
         
 
-        private async Task OnEachTarget(IProgress<ProgressEventArgs> progress, TargetDatabase target, CancellationToken ct)
+        private async Task OnEachTarget(IProgress<DeploymentProgressEventArgs> progress, TargetDatabase target, CancellationToken ct)
         {
            // await Task.Run(async () =>
           //  {
@@ -154,7 +155,7 @@ namespace TakoDeployCore.Model
 
         }
 
-        private async Task DeployToTarget(TargetDatabase target, IEnumerable<SqlScriptFile> scriptFiles, IProgress<ProgressEventArgs> progress, CancellationToken ct)
+        private async Task DeployToTarget(TargetDatabase target, IEnumerable<ScriptFile> scriptFiles, IProgress<DeploymentProgressEventArgs> progress, CancellationToken ct)
         {
             target.DeploymentStatusMessage = "Initiating connection...";
             OnProgress(target, progress);
@@ -198,7 +199,7 @@ namespace TakoDeployCore.Model
             }
         }
 
-        private static void OnProgress(TargetDatabase target, IProgress<ProgressEventArgs> progress)
+        private static void OnProgress(TargetDatabase target, IProgress<DeploymentProgressEventArgs> progress)
         {
             //progress?.Report(new ProgressEventArgs(target));
         }

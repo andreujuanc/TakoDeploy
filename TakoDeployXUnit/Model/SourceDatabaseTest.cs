@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using TakoDeployCore.Model;
+using TakoDeploy.Core.Model;
 using TakoDeployXUnit.Fixtures;
 using Xunit;
 
@@ -23,7 +23,7 @@ namespace TakoDeployXUnit.Model
         {
             var Source = new SourceDatabase();
             Source.ConnectionString = DBF.ConnectionString;
-            Source.ProviderName = DBF.ProviderName;
+            Source.ProviderType = DBF.ProviderType;
             return Source;
         }
         [Fact]

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace TakoDeployCore.Model
+namespace TakoDeploy.Core.Model
 {
     public class Notifier : INotifyPropertyChanged
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using TakoDeployCore.Model;
+using TakoDeploy.Core.Model;
 using TakoDeployXUnit.Fixtures;
 using Xunit;
 
@@ -21,7 +21,7 @@ namespace TakoDeployXUnit.Model
 
         private TargetDatabase CreateTarget()
         {
-            return new TargetDatabase(1, "Test", DBF.ConnectionString, DBF.ProviderName, 10, DBF.Databases[0]);
+            return new TargetDatabase(1, "Test", DBF.ConnectionString, DBF.ProviderType, 10, DBF.Databases[0]);
         }
 
         [Fact]

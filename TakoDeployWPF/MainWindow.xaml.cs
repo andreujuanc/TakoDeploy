@@ -18,8 +18,10 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using TakoDeployCore;
-using TakoDeployCore.Model;
+using TakoDeploy.Core.Model;
+using TakoDeploy.Core.Scripts;
 using TakoDeployWPF.Domain;
+using TakoDeploy.Core;
 
 namespace TakoDeployWPF
 {
@@ -70,7 +72,7 @@ namespace TakoDeployWPF
             DataContextModel.TreeSelectedItem = MainTreeView.SelectedItem;
         }
     }
-    public class MainViewModel : Notifier
+    public class MainViewModel : TakoDeploy.Core.Model.Notifier
     {
         private List<object> treeViewData;
         public string DeploymentMessage { get; set; }
@@ -89,7 +91,7 @@ namespace TakoDeployWPF
             OnPropertyChanged("TreeViewData");
         }
 
-        private void Current_DeploymentEvent(object sender, TakoDeployLib.Model.ProgressEventArgs e)
+        private void Current_DeploymentEvent(object sender, TakoDeploy.Core.DeploymentProgressEventArgs e)
         {
             if (e.Exception != null)
             {
@@ -184,12 +186,12 @@ namespace TakoDeployWPF
                 view.Height = 600;
 
             }
-            else if (TreeSelectedItem is SqlScriptFile)
+            else if (TreeSelectedItem is ScriptFile)
             {
-                editedObject = new SqlScriptFile((SqlScriptFile)TreeSelectedItem);
+                editedObject = new ScriptFile(DocumentManager.Current.GetParser(), (ScriptFile)TreeSelectedItem);
                 view = new ScriptEditor
                 {
-                    DataContext = new ScriptEditorViewModel() { Script = (SqlScriptFile)editedObject }
+                    DataContext = new ScriptEditorViewModel() { Script = (ScriptFile)editedObject }
                 };
                 view.Width = WindowSize.Width * 0.80;
                 view.Height = WindowSize.Height * 0.75;
@@ -210,9 +212,9 @@ namespace TakoDeployWPF
                     {
                         ((SourceDatabase)TreeSelectedItem).CopyFrom(editedObject as SourceDatabase);
                     }
-                    else if (TreeSelectedItem is SqlScriptFile)
+                    else if (TreeSelectedItem is ScriptFile)
                     {
-                        ((SqlScriptFile)TreeSelectedItem).CopyFrom(editedObject as SqlScriptFile);
+                        ((ScriptFile)TreeSelectedItem).CopyFrom(editedObject as ScriptFile);
                     }
                 }
             }
@@ -230,7 +232,7 @@ namespace TakoDeployWPF
 
         private async void ExecuteRunDialog(object o)
         {
-            var source = new SourceDatabase();
+            var source = new TakoDeploy.Core.Model.SourceDatabase();
             
             var view = new Domain.SourceEditorDialog
             {
@@ -255,7 +257,7 @@ namespace TakoDeployWPF
 
         private async void ExecuteNewScriptDialog(object o)
         {
-            var script = new SqlScriptFile();
+            var script = new ScriptFile(DocumentManager.Current.GetParser());
             var basename = "SqlScript";
             script.Name = basename + (DocumentManager.Current.Deployment.ScriptFiles.Where(x => x.Name.StartsWith(basename)).Count() + 1).ToString();
             var view = new ScriptEditor
@@ -308,7 +310,8 @@ namespace TakoDeployWPF
             //using (var streaem = new MemoryStream())
             using (var stream = new System.IO.StreamReader(saveDialog.OpenFile()))
             {
-                var data = Newtonsoft.Json.Linq.JObject.Parse(stream.ReadToEnd());
+                var doc = stream.ReadToEnd();
+                var data = Newtonsoft.Json.Linq.JObject.Parse(doc);
                 var deployment = data.ToObject<Deployment>();
                 if (deployment != null)
                 {
@@ -401,7 +404,7 @@ namespace TakoDeployWPF
             if (DeploymentIsRunning) return false;
             if ((TreeSelectedItem as SourceDatabase) == null)
             {
-                if ((TreeSelectedItem as SqlScriptFile) == null)
+                if ((TreeSelectedItem as ScriptFile) == null)
                 {
                     return false;
                 }
@@ -492,13 +495,13 @@ namespace TakoDeployWPF
             OnPropertyChanged("SubElements");
         }
 
-        public IEnumerable<SqlScriptFile> SubElements
+        public IEnumerable<ScriptFile> SubElements
         {
             get
             {
-                if (DocumentManager.Current == null) return new List<SqlScriptFile>();
-                if (DocumentManager.Current.Deployment == null) return new List<SqlScriptFile>();
-                if (DocumentManager.Current.Deployment.ScriptFiles == null) return new List<SqlScriptFile>();
+                if (DocumentManager.Current == null) return new List<ScriptFile>();
+                if (DocumentManager.Current.Deployment == null) return new List<ScriptFile>();
+                if (DocumentManager.Current.Deployment.ScriptFiles == null) return new List<ScriptFile>();
                 return DocumentManager.Current?.Deployment?.ScriptFiles;
             }
             set { }

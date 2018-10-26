@@ -41,14 +41,11 @@ namespace TakoDeployXUnit.Fixtures
 
         private void Execute(string sql)
         {
-            var factory = DbProviderFactories.GetFactory(ProviderName);
-            using (var connection = factory.CreateConnection())
+            //using (
+            var context = new TakoDeploy.Core.Data.Context.TakoConnectionFactory().GetDbContext(ProviderType, ConnectionString);
+                    //)
             {
-                connection.ConnectionString = this.ConnectionString;
-                connection.Open();
-                var command = connection.CreateCommand();
-                command.CommandText = sql;
-                command.ExecuteNonQuery();
+                context.ExecuteAsync(sql).Wait();//TODO ASYNc
             }
         }
 
@@ -57,7 +54,7 @@ namespace TakoDeployXUnit.Fixtures
         private void SetConnectionString(string instance)
         {
             ConnectionString = $@"Data Source=(LocalDB)\{instance};Integrated Security=true";
-            ProviderName = "System.Data.SqlClient";
+            ProviderType = TakoDeploy.Core.Data.Context.ProviderTypes.SqLite;
         }
 
         private string SelectInstance(string[] instances)
@@ -96,7 +93,7 @@ namespace TakoDeployXUnit.Fixtures
         }
 
         public string ConnectionString { get; private set; }
-        public string ProviderName { get; private set; }
+        public TakoDeploy.Core.Data.Context.ProviderTypes ProviderType { get; private set; }
 
         public void Dispose()
         {

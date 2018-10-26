@@ -7,33 +7,26 @@ using System.Threading.Tasks;
 
 namespace TakoDeployLib.Model
 {
-    public class ExecutionMessage
+    public class SqlExecutionMessage : TakoDeploy.Core.Events.ExecutionMessage
     {
 
-        public ExecutionMessage(SqlError Exception)
+        public SqlExecutionMessage(SqlError Exception) 
         {
             this.SqlError = Exception;
         }
 
-        public ExecutionMessage(Exception ex)
+        public SqlExecutionMessage(Exception ex) : base(ex)
         {
-            this.Exception = ex;
         }
 
-        public ExecutionMessage(string message)
+        public SqlExecutionMessage(string message) : base(message)
         {
-            Message = message;
         }
 
-        public bool IsError
-        {
-            get
-            {
-                return (SqlError != null && (SqlError.Class > 0 || SqlError.Number > 0)) || Exception != null;
-            }
-        }
+     
+
         public SqlError SqlError { get; set; }
-        public Exception Exception { get; set; }
+        
 
         private string _message;
         public string Message { get { return GetMessage();  } set { _message = value; } }
@@ -44,6 +37,11 @@ namespace TakoDeployLib.Model
             {
                 return (SqlError != null) ? SqlError.LineNumber : (Exception is DeploymentException ? ((DeploymentException)Exception).LineNumber : 0);
             }
+        }
+        public override bool OnIsError()
+        {
+            if ((SqlError != null && (SqlError.Class > 0 || SqlError.Number > 0))) return true;
+            return base.OnIsError();
         }
 
         private string GetMessage()

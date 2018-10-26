@@ -7,10 +7,12 @@ using System.Data.SqlClient;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using TakoDeployCore.DataContext;
+using TakoDeploy.Core.Events;
 using TakoDeployLib.Model;
+using TakoDeploy.Core.Scripts;
+using TakoDeploy.Core.Data.Context;
 
-namespace TakoDeployCore.Model
+namespace TakoDeploy.Core.Model
 {
     public class TargetDatabase : Database, INotifyPropertyChanged
     {
@@ -63,17 +65,18 @@ namespace TakoDeployCore.Model
         }
 
        
-        public TargetDatabase(int id, string name, string connectionString, string providerName, int commandTimeout)
+        public TargetDatabase(int id, string name, string connectionString, ProviderTypes providerType, int commandTimeout)
         {
             ID = id;
             Name = name;
             ConnectionString = connectionString;
-            ProviderName = providerName;
+            ProviderType = providerType;
             CommandTimeout = commandTimeout;
             Messages.CollectionChanged += Messages_CollectionChanged;
         }
 
-        public TargetDatabase(int id, string name, string connectionString, string providerName, int commandTimeout, string changeDatabaseTo) : this(id, name, connectionString, providerName, commandTimeout)
+        public TargetDatabase(int id, string name, string connectionString, ProviderTypes providerType, int commandTimeout, string changeDatabaseTo) 
+            : this(id, name, connectionString, providerType, commandTimeout)
         {
             var builder = new SqlConnectionStringBuilder(connectionString)
             {
@@ -96,11 +99,11 @@ namespace TakoDeployCore.Model
         }
         //this constructor is for file deserialization to work.
    
-        internal async Task DeployAsync(IEnumerable<SqlScriptFile> scriptFiles, CancellationToken ct)
+        internal async Task DeployAsync(IEnumerable<ScriptFile> scriptFiles, CancellationToken ct)
         {
             if (ct.IsCancellationRequested) return;
-            SqlScriptFile currentFile = null;
-            SqlScriptContent currentContent = null;
+            ScriptFile currentFile = null;
+            ScriptContent currentContent = null;
             try
             {
                 Context.BeginTransaction();
@@ -158,24 +161,25 @@ namespace TakoDeployCore.Model
             throw new OperationCanceledException();
         }
 
-        public override void OnInfoMessage(object sender, SqlInfoMessageEventArgs e)
-        {
-            if (e == null) return;
-            if (e.Errors != null)
-            {
-                foreach (object error in e.Errors)
-                {
-                    if (error is SqlError)
-                    {
-                        Messages.Add(new ExecutionMessage((SqlError)error));
-                    }
-                }
-            }
-            else if (e.Message != null)
-            {
-                Messages.Add(new ExecutionMessage(e.Message));
-            }
+        //TODO:
+        //public override void OnInfoMessage(object sender, SqlInfoMessageEventArgs e)
+        //{
+        //    if (e == null) return;
+        //    if (e.Errors != null)
+        //    {
+        //        foreach (object error in e.Errors)
+        //        {
+        //            if (error is SqlError)
+        //            {
+        //                Messages.Add(new ExecutionMessage((SqlError)error));
+        //            }
+        //        }
+        //    }
+        //    else if (e.Message != null)
+        //    {
+        //        Messages.Add(new ExecutionMessage(e.Message));
+        //    }
             
-        }
+        //}
     }
 }

@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using TakoDeployCore;
-using TakoDeployCore.Model;
 using TakoDeployXUnit.Fixtures;
 using Xunit;
+using TakoDeploy.Core.Model;
 
 namespace TakoDeployXUnit.Model
 {
@@ -70,10 +70,10 @@ namespace TakoDeployXUnit.Model
         {
             DocumentManager.Current.Deployment.Sources.Clear();
             DocumentManager.Current.Deployment.Sources.Add(
-                new TakoDeployCore.Model.SourceDatabase()
+                new TakoDeploy.Core.Model.SourceDatabase()
                 {
                     ConnectionString = DBF.ConnectionString,
-                    ProviderName = DBF.ProviderName,
+                    ProviderType = DBF.ProviderType,
                     Type = SourceType.DataSource
                 }
             );

@@ -7,9 +7,11 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using TakoDeployCore;
-using TakoDeployCore.Model;
+
 using TakoDeployLib.Model;
+using TakoDeploy.Core;
+using TakoDeploy.Core.Model;
+using TakoDeploy.Core.Scripts;
 
 namespace TakoDeployCore
 {
@@ -17,7 +19,7 @@ namespace TakoDeployCore
     {
         public static event EventHandler OnNewDocument;
         public event PropertyChangedEventHandler PropertyChanged;
-        public event EventHandler<ProgressEventArgs> DeploymentEvent;
+        public event EventHandler<DeploymentProgressEventArgs> DeploymentEvent;
 
         public static DocumentManager _current = null;
         public static DocumentManager Current
@@ -26,7 +28,7 @@ namespace TakoDeployCore
             set
             {
                 if (value.Deployment == null)
-                    value.Deployment = new TakoDeployCore.Model.Deployment();
+                    value.Deployment = new Deployment();
                 value.IsModified = true;
                 _current = value;
 
@@ -34,11 +36,11 @@ namespace TakoDeployCore
             }
         }
 
-        public TakoDeploy TakoDeploy { get; private set; }
+        public TakoDeployment TakoDeploy { get; private set; }
 
         public string CurrentFileName { get; set; }
         public bool IsModified { get; set; }
-        public IDeployment Deployment { get; private set; }
+        public Deployment Deployment { get; private set; }
 
         public virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -49,11 +51,11 @@ namespace TakoDeployCore
         {
             if (this.Deployment.Status == DeploymentStatus.Running)
             {
-                DeploymentEvent?.Invoke(this.Deployment, new ProgressEventArgs(new InvalidOperationException("Deployment is already running.")));
+                DeploymentEvent?.Invoke(this.Deployment, new DeploymentProgressEventArgs(new InvalidOperationException("Deployment is already running.")));
             }
             else
             {
-                TakoDeploy = new TakoDeploy(this.Deployment);
+                TakoDeploy = new TakoDeployment(this.Deployment);
                 await TakoDeploy.BeginDeploy(e => DeploymentEvent?.Invoke(this, e));
             }
         }
@@ -67,11 +69,11 @@ namespace TakoDeployCore
         {
             if (this.Deployment.Status == DeploymentStatus.Running)
             {
-                DeploymentEvent?.Invoke(this.Deployment, new ProgressEventArgs(new InvalidOperationException("Validation is already running.")));
+                DeploymentEvent?.Invoke(this.Deployment, new DeploymentProgressEventArgs(new InvalidOperationException("Validation is already running.")));
             }
             else
             {
-                TakoDeploy = new TakoDeploy(this.Deployment);
+                TakoDeploy = new TakoDeployment(this.Deployment);
                 await TakoDeploy.ValidateDeploy(e => DeploymentEvent?.Invoke(this, e));
             }
         }
@@ -98,6 +100,9 @@ namespace TakoDeployCore
             
         }
 
-        
+        public IScriptParser GetParser()
+        {
+            return new TakoDeployLib.ParserFactory().GetParser(this.Deployment.Sources.First().ProviderType);
+        }
     }
 }

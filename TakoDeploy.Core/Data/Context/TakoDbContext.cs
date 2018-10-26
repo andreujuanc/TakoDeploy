@@ -4,10 +4,9 @@ using System.Text;
 using System.Data.Common;
 using System.Threading.Tasks;
 using Dapper;
-using System.Data.SqlClient;
 using System.Threading;
 
-namespace TakoDeployCore.DataContext
+namespace TakoDeploy.Core.Data.Context
 {
     public class TakoDbContext 
     {
@@ -16,19 +15,20 @@ namespace TakoDeployCore.DataContext
         private DbConnection Connection { get; set; }
         private DbTransaction Transaction { get; set; }
 
-        public event SqlInfoMessageEventHandler InfoMessage;
+        public event Events.InfoMessageEventHandler InfoMessage;
 
-        public TakoDbContext(DbProviderFactory factory)
+        public TakoDbContext(DbProviderFactory factory, string connectionString)
         {
             this._factory = factory;
             if (Connection != null) {
 
                 try
                 {
-                    if (Connection is SqlConnection)
-                    {
-                        ((SqlConnection)Connection).InfoMessage -= TakoDbContext_InfoMessage;
-                    }
+                    //TODO: Do Adapter/Facade pattern here.
+                    //if (Connection is SqlConnection)
+                    //{
+                    //    ((SqlConnection)Connection).InfoMessage -= TakoDbContext_InfoMessage;
+                    //}
                     Connection.Close();
                     Connection.Dispose();
                 }
@@ -37,27 +37,28 @@ namespace TakoDeployCore.DataContext
                 }
             }
             Connection = _factory.CreateConnection();
-            if (Connection is SqlConnection)
-                ((SqlConnection)Connection).InfoMessage += TakoDbContext_InfoMessage;
+            Connection.ConnectionString = connectionString;
+            //if (Connection is SqlConnection)
+            //    ((SqlConnection)Connection).InfoMessage += TakoDbContext_InfoMessage;
         }
 
-        private void TakoDbContext_InfoMessage(object sender, SqlInfoMessageEventArgs e)
-        {
-            InfoMessage?.Invoke(sender, e);
-        }
+        //private void TakoDbContext_InfoMessage(object sender, InfoDbMessageEventArgs e)
+        //{
+        //    InfoMessage?.Invoke(sender, e);
+        //}
 
-        internal async Task OpenAsync(string connectionString, CancellationToken ct)
+        public async Task OpenAsync(string connectionString, CancellationToken ct)
         {
             this.Connection.ConnectionString = connectionString;
             await this.Connection.OpenAsync(ct);
         }
 
-        internal bool IsOpen()
+        public bool IsOpen()
         {
             return this.Connection.State == System.Data.ConnectionState.Open;
         }
 
-        internal async Task ExecuteNonQueryAsync(string script, int commandTimeout, CancellationToken ct)
+        public async Task ExecuteNonQueryAsync(string script, int commandTimeout, CancellationToken ct)
         {
             using (var command = this.Connection.CreateCommand())
             {
@@ -70,37 +71,37 @@ namespace TakoDeployCore.DataContext
             }
         }
 
-        internal async Task<IEnumerable<dynamic>> ExecuteAsync(string script)
+        public async Task<IEnumerable<dynamic>> ExecuteAsync(string script)
         {
             return await this.Connection.QueryAsync(script);
         }
 
-        internal void CloseConnections()
+        public void CloseConnections()
         {
             this.Connection?.Close();
         }
 
-        internal async Task<IEnumerable<T>> ExecuteAsync<T>(string script)
+        public async Task<IEnumerable<T>> ExecuteAsync<T>(string script)
         {
             return await this.Connection.QueryAsync<T>(script);
         }
 
-        internal void BeginTransaction()
+        public void BeginTransaction()
         {
             Transaction = this.Connection.BeginTransaction();
         }
 
-        internal void RollbackTransaction()
+        public void RollbackTransaction()
         {
             Transaction.Rollback();
         }
 
-        internal void CommitTransaction()
+        public void CommitTransaction()
         {
             Transaction.Commit();
         }
 
-        internal void FinishConnection()
+        public void FinishConnection()
         {
             this.Connection.Close();
         }

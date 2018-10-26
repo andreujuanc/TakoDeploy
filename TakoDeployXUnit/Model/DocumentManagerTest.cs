@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TakoDeployCore;
-using TakoDeployCore.Model;
+using TakoDeploy.Core.Model;
 using TakoDeployXUnit.Fixtures;
 using Xunit;
 

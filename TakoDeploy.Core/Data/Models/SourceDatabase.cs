@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace TakoDeployCore.Model
+namespace TakoDeploy.Core.Model
 {
     public class SourceDatabase : Database, INotifyPropertyChanged
     {
@@ -25,7 +25,7 @@ namespace TakoDeployCore.Model
         {
             Name = original.Name;
             ConnectionString = original.ConnectionString;
-            ProviderName = original.ProviderName;
+            ProviderType = original.ProviderType;
             Type = original.Type;
             NameFilter = original.NameFilter;
             CommandTimeout = original.CommandTimeout;
@@ -41,32 +41,36 @@ namespace TakoDeployCore.Model
 
         public string NameFilter { get; set; }
         public int CommandTimeout { get; set; }
-
+        class DB
+        {
+            public string name { get; set; }
+        }
         public async Task PopulateTargets()
         {
             Targets.Clear();
             if (Type == SourceType.Direct)
             {
-                var target = new TargetDatabase(Targets.Count + 1, Name, ConnectionString, ProviderName, CommandTimeout);
+                var target = new TargetDatabase(Targets.Count + 1, Name, ConnectionString, ProviderType, CommandTimeout);
                 Targets.Add(target);
             }
             else if (Type == SourceType.DataSource)
             {
                 try
                 {
-                    var result = await this.TryConnect(CancellationToken.None);
+                    var result = await TryConnect(CancellationToken.None);
                     if (result)
                     {
-                        var databases = await this.Context.ExecuteAsync("SELECT * FROM sys.databases");
+                        var databases = await Context.ExecuteAsync<DB>("SELECT * FROM sys.databases");
                         if (databases != null)
                         {
+                           
                             foreach (var db in databases)
                             {
-                                string name = db.name as string;
+                                var name = db.name as string;
                                 if (name == null) return;
                                 if (!string.IsNullOrEmpty(NameFilter) && !name.Contains(NameFilter)) continue;
 
-                                var target = new TargetDatabase(Targets.Count + 1, Name, ConnectionString, ProviderName, CommandTimeout, name);
+                                var target = new TargetDatabase(Targets.Count + 1, Name, ConnectionString, ProviderType, CommandTimeout, name);
                                 Targets.Add(target);
                             }
                         }

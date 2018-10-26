@@ -5,8 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TakoDeployCore;
-using TakoDeployCore.DataContext;
-using TakoDeployCore.Model;
+using TakoDeploy.Core.Data.Context;
+using TakoDeploy.Core.Model;
 using TakoDeployXUnit.Fixtures;
 using Xunit;
 
@@ -77,7 +77,7 @@ namespace TakoDeployXUnit.Deployment
         {
             DocumentManager.Current.Deployment.ScriptFiles.Clear();
             DocumentManager.Current.Deployment.ScriptFiles.Add(
-                new TakoDeployCore.Model.SqlScriptFile()
+                new TakoDeploy.Core.Scripts.ScriptFile(DocumentManager.Current.GetParser())
                 {
                     Content = @"
                             PRINT 'Waiting'
@@ -87,10 +87,10 @@ namespace TakoDeployXUnit.Deployment
                 });
             DocumentManager.Current.Deployment.Sources.Clear();
             DocumentManager.Current.Deployment.Sources.Add(
-                new TakoDeployCore.Model.SourceDatabase()
+                new TakoDeploy.Core.Model.SourceDatabase()
                 {
                     ConnectionString = DBF.ConnectionString,
-                    ProviderName = DBF.ProviderName,
+                    ProviderType = DBF.ProviderType,
                     Type = SourceType.Direct,
                     CommandTimeout = timeoutSeconds
                 }
@@ -99,15 +99,16 @@ namespace TakoDeployXUnit.Deployment
 
         private int? GetTableCount(TargetDatabase target)
         {
-            var factory = DbProviderFactories.GetFactory(target.ProviderName);
+            var context = new TakoConnectionFactory().GetDbContext(target.ProviderType, target.ConnectionString);
             int? result = null;
-            using (var connection = factory.CreateConnection())
+            //using (var connection = context.)
             {
-                connection.ConnectionString = target.ConnectionString;
-                connection.Open();
-                var command = connection.CreateCommand();
-                command.CommandText = "SELECT COUNT(1) as [TablesCount] FROM Sys.Tables";
-                result = command.ExecuteScalar() as int?;
+                //connection.ConnectionString = target.ConnectionString;
+                //connection.Open();
+                //var command = connection.CreateCommand();
+                //command.CommandText = "SELECT COUNT(1) as [TablesCount] FROM Sys.Tables";
+                //result = command.ExecuteScalar() as int?;
+                //TODO: finish this
             }
             return result;
         }
@@ -116,7 +117,7 @@ namespace TakoDeployXUnit.Deployment
         {
             DocumentManager.Current.Deployment.ScriptFiles.Clear();
             DocumentManager.Current.Deployment.ScriptFiles.Add(
-                new TakoDeployCore.Model.SqlScriptFile() {
+                new TakoDeploy.Core.Scripts.ScriptFile(DocumentManager.Current.GetParser()) {
                     Content = ScriptManager.GetNorthwind()
                 });
         }
@@ -125,10 +126,10 @@ namespace TakoDeployXUnit.Deployment
         {
             DocumentManager.Current.Deployment.Sources.Clear();
             DocumentManager.Current.Deployment.Sources.Add(
-                new TakoDeployCore.Model.SourceDatabase()
+                new TakoDeploy.Core.Model.SourceDatabase()
                 {
                     ConnectionString = DBF.ConnectionString,
-                    ProviderName = DBF.ProviderName,
+                    ProviderType = DBF.ProviderType,
                     Type = SourceType.DataSource,
                     NameFilter = "Tako"
                 }
