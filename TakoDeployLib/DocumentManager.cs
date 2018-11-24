@@ -45,7 +45,7 @@ namespace TakoDeployCore
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public async Task Deploy()
+        public async Task Deploy(bool executeInQueueMode)
         {
             if (this.Deployment.Status == DeploymentStatus.Running)
             {
@@ -54,7 +54,7 @@ namespace TakoDeployCore
             else
             {
                 TakoDeploy = new TakoDeploy(this.Deployment);
-                await TakoDeploy.BeginDeploy(e => DeploymentEvent?.Invoke(this, e));
+                await TakoDeploy.BeginDeploy(executeInQueueMode, e => DeploymentEvent?.Invoke(this, e));
             }
         }
         public async Task Stop()

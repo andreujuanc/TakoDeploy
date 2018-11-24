@@ -69,6 +69,12 @@
                     <materialDesign:PackIcon Kind="Send" Height="24" Width="24" Margin="10, 0, 0, 0"  />
                 </WrapPanel>
             </Button>
+            <ToggleButton Style="{StaticResource MaterialDesignSwitchToggleButton}" 
+                                    Grid.Column="1"
+                                    HorizontalAlignment="Left" Margin="155, 74, 0, 0"
+                                    IsChecked="{Binding IsQueueModeOn}" ></ToggleButton>
+            <TextBlock  Grid.Column="1"  HorizontalAlignment="Left" Margin="195, 79, 0, 0" >Queue mode</TextBlock>
+            
             <TextBlock HorizontalAlignment="Left" Margin="300,25,0,25" Grid.Column="1" Text="{Binding DeploymentMessage}" VerticalAlignment="Center">
 
             </TextBlock>

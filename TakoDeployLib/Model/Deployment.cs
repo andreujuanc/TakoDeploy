@@ -106,23 +106,30 @@ namespace TakoDeployCore.Model
             return null;
         }
 
-        public async Task StartAsync(IProgress<ProgressEventArgs> progress, CancellationToken ct)
+        public async Task StartAsync(IProgress<ProgressEventArgs> progress, bool executeInQueueMode, CancellationToken ct)
         {
             if (Status == DeploymentStatus.Error)
             {
                 progress?.Report(new ProgressEventArgs("Error, deployment not valid"));
                 return;
             }
+            var selectedTargets = Targets.Where(x => x.Selected);
+            if (executeInQueueMode)
+            {
+                foreach (var target in selectedTargets)
+                    await OnEachTarget(progress, target, ct);
+            }
+            else
+            {
+                var targetsTasks =
+                     selectedTargets
+                    .AsParallel()
+                    .Select(async (target) =>
+                             await OnEachTarget(progress, target, ct)
+                    );
 
-            var targetsTasks = 
-                Targets
-                .Where(x=>x.Selected)
-                .AsParallel()
-                .Select(async (target) => 
-                         await OnEachTarget(progress, target, ct)
-                );
-
-            await Task.WhenAll(targetsTasks).ConfigureAwait(false);
+                await Task.WhenAll(targetsTasks).ConfigureAwait(false);
+            }
 
             ct.ThrowIfCancellationRequested();
             if (Targets.Where(x => x.DeploymentState != Database.DatabaseDeploymentState.Success).Count() > 0)

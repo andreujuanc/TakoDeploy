@@ -74,6 +74,7 @@ namespace TakoDeployWPF
     {
         private List<object> treeViewData;
         public string DeploymentMessage { get; set; }
+        public bool IsQueueModeOn { get; set; } 
         public MainViewModel()
         {
             treeViewData = new List<object>() {
@@ -387,7 +388,7 @@ namespace TakoDeployWPF
 
         private async void ExecuteRunDeployCommand(object o)
         {
-            await DocumentManager.Current.Deploy();
+            await DocumentManager.Current.Deploy(this.IsQueueModeOn);
         }
 
         private async void ExecuteStopDeployCommand(object o)
