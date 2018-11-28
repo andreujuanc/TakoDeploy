@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.26430.13
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EE2C5562-493E-484A-AE43-0AC1B928D58B}"
 	ProjectSection(SolutionItems) = preProject
+		.codeclimate.yml = .codeclimate.yml
+		azure-pipelines.yml = azure-pipelines.yml
 		TakoDeployLibs\global.json = TakoDeployLibs\global.json
 	EndProjectSection
 EndProject
@@ -17,6 +19,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TakoDeployLib.Tests", "TakoDeployXUnit\TakoDeployLib.Tests.csproj", "{C7AD1AC0-565B-407A-86D8-227B0242AAB3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationTests", "IntegrationTests\IntegrationTests.csproj", "{228DE8C0-60B4-4428-9F54-A6F47D0B3B3F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TakoDeploy.Tests.Common", "TakoDeploy.Tests.Common\TakoDeploy.Tests.Common.csproj", "{1C09D203-299A-46C4-AE37-A4AD72DF2A59}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -130,6 +134,30 @@ Global
 		{228DE8C0-60B4-4428-9F54-A6F47D0B3B3F}.ReleaseSquirrel|x64.Build.0 = Release|Any CPU
 		{228DE8C0-60B4-4428-9F54-A6F47D0B3B3F}.ReleaseSquirrel|x86.ActiveCfg = Release|Any CPU
 		{228DE8C0-60B4-4428-9F54-A6F47D0B3B3F}.ReleaseSquirrel|x86.Build.0 = Release|Any CPU
+		{1C09D203-299A-46C4-AE37-A4AD72DF2A59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C09D203-299A-46C4-AE37-A4AD72DF2A59}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C09D203-299A-46C4-AE37-A4AD72DF2A59}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{1C09D203-299A-46C4-AE37-A4AD72DF2A59}.Debug|ARM.Build.0 = Debug|Any CPU
+		{1C09D203-299A-46C4-AE37-A4AD72DF2A59}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{1C09D203-299A-46C4-AE37-A4AD72DF2A59}.Debug|x64.Build.0 = Debug|Any CPU
+		{1C09D203-299A-46C4-AE37-A4AD72DF2A59}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1C09D203-299A-46C4-AE37-A4AD72DF2A59}.Debug|x86.Build.0 = Debug|Any CPU
+		{1C09D203-299A-46C4-AE37-A4AD72DF2A59}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C09D203-299A-46C4-AE37-A4AD72DF2A59}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C09D203-299A-46C4-AE37-A4AD72DF2A59}.Release|ARM.ActiveCfg = Release|Any CPU
+		{1C09D203-299A-46C4-AE37-A4AD72DF2A59}.Release|ARM.Build.0 = Release|Any CPU
+		{1C09D203-299A-46C4-AE37-A4AD72DF2A59}.Release|x64.ActiveCfg = Release|Any CPU
+		{1C09D203-299A-46C4-AE37-A4AD72DF2A59}.Release|x64.Build.0 = Release|Any CPU
+		{1C09D203-299A-46C4-AE37-A4AD72DF2A59}.Release|x86.ActiveCfg = Release|Any CPU
+		{1C09D203-299A-46C4-AE37-A4AD72DF2A59}.Release|x86.Build.0 = Release|Any CPU
+		{1C09D203-299A-46C4-AE37-A4AD72DF2A59}.ReleaseSquirrel|Any CPU.ActiveCfg = Release|Any CPU
+		{1C09D203-299A-46C4-AE37-A4AD72DF2A59}.ReleaseSquirrel|Any CPU.Build.0 = Release|Any CPU
+		{1C09D203-299A-46C4-AE37-A4AD72DF2A59}.ReleaseSquirrel|ARM.ActiveCfg = Release|Any CPU
+		{1C09D203-299A-46C4-AE37-A4AD72DF2A59}.ReleaseSquirrel|ARM.Build.0 = Release|Any CPU
+		{1C09D203-299A-46C4-AE37-A4AD72DF2A59}.ReleaseSquirrel|x64.ActiveCfg = Release|Any CPU
+		{1C09D203-299A-46C4-AE37-A4AD72DF2A59}.ReleaseSquirrel|x64.Build.0 = Release|Any CPU
+		{1C09D203-299A-46C4-AE37-A4AD72DF2A59}.ReleaseSquirrel|x86.ActiveCfg = Release|Any CPU
+		{1C09D203-299A-46C4-AE37-A4AD72DF2A59}.ReleaseSquirrel|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -137,6 +165,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{C7AD1AC0-565B-407A-86D8-227B0242AAB3} = {91151FA1-C79C-41D1-9BEF-9AC6DE913AFA}
 		{228DE8C0-60B4-4428-9F54-A6F47D0B3B3F} = {91151FA1-C79C-41D1-9BEF-9AC6DE913AFA}
+		{1C09D203-299A-46C4-AE37-A4AD72DF2A59} = {91151FA1-C79C-41D1-9BEF-9AC6DE913AFA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E834B448-AD87-4159-8FF3-28CA12275106}

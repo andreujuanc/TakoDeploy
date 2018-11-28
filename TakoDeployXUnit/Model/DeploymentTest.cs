@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using TakoDeploy.Tests.Common.Fixtures;
 using TakoDeployCore;
 using TakoDeployCore.Model;
-using TakoDeployXUnit.Fixtures;
 using Xunit;
 
 namespace TakoDeployXUnit.Model
