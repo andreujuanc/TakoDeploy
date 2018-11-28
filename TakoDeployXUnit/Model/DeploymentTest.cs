@@ -61,7 +61,7 @@ namespace TakoDeployXUnit.Model
             target.Selected = false;
             var total = DocumentManager.Current.Deployment.Targets.Count;
             var deselected = DocumentManager.Current.Deployment.Targets.Where(x=>x.Selected).Count();
-            await DocumentManager.Current.Deployment.StartAsync(null, CancellationToken.None);
+            await DocumentManager.Current.Deployment.StartAsync(null, null, CancellationToken.None);
             Assert.Equal(Database.DatabaseDeploymentState.Idle, target.DeploymentState);
             Assert.Equal(total - 1, deselected);
         }

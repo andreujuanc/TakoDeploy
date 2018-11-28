@@ -67,6 +67,7 @@
   <ItemGroup>
     <Compile Include="DataContext\TakoConnectionFactory.cs" />
     <Compile Include="DataContext\TakoDbContext.cs" />
+    <Compile Include="DeployOptions.cs" />
     <Compile Include="DocumentManager.cs" />
     <Compile Include="Model\BindingOperations.cs" />
     <Compile Include="Model\Database.cs" />

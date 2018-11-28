@@ -106,7 +106,7 @@ namespace TakoDeployCore.Model
             return null;
         }
 
-        public async Task StartAsync(IProgress<ProgressEventArgs> progress, bool executeInQueueMode, CancellationToken ct)
+        public async Task StartAsync(IProgress<ProgressEventArgs> progress, DeployOptions options, CancellationToken ct)
         {
             if (Status == DeploymentStatus.Error)
             {
@@ -114,7 +114,7 @@ namespace TakoDeployCore.Model
                 return;
             }
             var selectedTargets = Targets.Where(x => x.Selected);
-            if (executeInQueueMode)
+            if (options.ExecuteInQueueMode)
             {
                 foreach (var target in selectedTargets)
                     await OnEachTarget(progress, target, ct);
@@ -124,6 +124,7 @@ namespace TakoDeployCore.Model
                 var targetsTasks =
                      selectedTargets
                     .AsParallel()
+                    .WithDegreeOfParallelism(options.MaxParallelismDegree)
                     .Select(async (target) =>
                              await OnEachTarget(progress, target, ct)
                     );
