@@ -9,6 +9,6 @@ namespace TakoDeployCore
     public class DeployOptions
     {
         public bool ExecuteInQueueMode{ get; set; }
-        public byte MaxParallelismDegree { get; set; }
+        public byte MaxParallelismDegree { get; set; } = 1;
     }
 }

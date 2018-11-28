@@ -108,11 +108,17 @@ namespace TakoDeployCore.Model
 
         public async Task StartAsync(IProgress<ProgressEventArgs> progress, DeployOptions options, CancellationToken ct)
         {
+            if (options == null)
+            {
+                options = new DeployOptions();
+            }
+
             if (Status == DeploymentStatus.Error)
             {
                 progress?.Report(new ProgressEventArgs("Error, deployment not valid"));
                 return;
             }
+
             var selectedTargets = Targets.Where(x => x.Selected);
             if (options.ExecuteInQueueMode)
             {
