@@ -15,9 +15,14 @@
             <RowDefinition />
             <RowDefinition />
             <RowDefinition />
+            <RowDefinition />
         </Grid.RowDefinitions>
         <TextBlock VerticalAlignment="Center" FontSize="26" Margin="10, 10, 10, 10">Settings:</TextBlock>
         <CheckBox Grid.Row="1" IsChecked="{Binding EnableTelemetry}" >Enable Anonymous Telemetry</CheckBox>
+
+        <TextBlock Grid.Row="2" Margin="0, 10, 0, 0" VerticalAlignment="Top" Text="{ Binding MaxParallelismDegreeLabel }" ></TextBlock>
+        <Slider Grid.Row="2" Margin="0, 30, 0, 0" Minimum="1" Maximum="32" Value="{ Binding MaxParallelismDegree }" ></Slider>
+        
         <StackPanel Orientation="Horizontal" Grid.Row="9"
                     Margin="0 16 0 0">
             <Button IsDefault="True" Style="{DynamicResource MaterialDesignFlatButton}"

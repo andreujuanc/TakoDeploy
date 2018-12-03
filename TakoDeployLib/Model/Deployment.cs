@@ -106,15 +106,21 @@ namespace TakoDeployCore.Model
             return null;
         }
 
-        public async Task StartAsync(IProgress<ProgressEventArgs> progress, bool executeInQueueMode, CancellationToken ct)
+        public async Task StartAsync(IProgress<ProgressEventArgs> progress, DeployOptions options, CancellationToken ct)
         {
+            if (options == null)
+            {
+                options = new DeployOptions();
+            }
+
             if (Status == DeploymentStatus.Error)
             {
                 progress?.Report(new ProgressEventArgs("Error, deployment not valid"));
                 return;
             }
+
             var selectedTargets = Targets.Where(x => x.Selected);
-            if (executeInQueueMode)
+            if (options.ExecuteInQueueMode)
             {
                 foreach (var target in selectedTargets)
                     await OnEachTarget(progress, target, ct);
@@ -124,6 +130,7 @@ namespace TakoDeployCore.Model
                 var targetsTasks =
                      selectedTargets
                     .AsParallel()
+                    .WithDegreeOfParallelism(options.MaxParallelismDegree)
                     .Select(async (target) =>
                              await OnEachTarget(progress, target, ct)
                     );

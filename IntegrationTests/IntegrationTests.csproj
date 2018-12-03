@@ -56,6 +56,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\TakoDeploy.Tests.Common\TakoDeploy.Tests.Common.csproj">
+      <Project>{1C09D203-299A-46C4-AE37-A4AD72DF2A59}</Project>
+      <Name>TakoDeploy.Tests.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TakoDeployLib\TakoDeployLib.csproj">
       <Project>{7E7105D9-EDE6-41FA-8E53-8AE3ED9403E6}</Project>
       <Name>TakoDeployLib</Name>

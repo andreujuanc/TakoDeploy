@@ -13,7 +13,7 @@ namespace TakoDeployCore.Model
     public interface IDeployment : INotifyPropertyChanged
     {
         DeploymentStatus Status { get; set; }
-        Task StartAsync(IProgress<ProgressEventArgs> progress, bool executeInQueueMode, CancellationToken ct);
+        Task StartAsync(IProgress<ProgressEventArgs> progress, DeployOptions options, CancellationToken ct);
         int DeploymentID { get; set; }
         //string SqlSource { get; set; }
         ObservableCollectionEx<SourceDatabase> Sources { get; set; }

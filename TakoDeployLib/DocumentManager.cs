@@ -45,8 +45,10 @@ namespace TakoDeployCore
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public async Task Deploy(bool executeInQueueMode)
+        public async Task Deploy(DeployOptions options = null)
         {
+            if (options == null) options = new DeployOptions();
+
             if (this.Deployment.Status == DeploymentStatus.Running)
             {
                 DeploymentEvent?.Invoke(this.Deployment, new ProgressEventArgs(new InvalidOperationException("Deployment is already running.")));
@@ -54,7 +56,7 @@ namespace TakoDeployCore
             else
             {
                 TakoDeploy = new TakoDeploy(this.Deployment);
-                await TakoDeploy.BeginDeploy(executeInQueueMode, e => DeploymentEvent?.Invoke(this, e));
+                await TakoDeploy.BeginDeploy(options, e => DeploymentEvent?.Invoke(this, e));
             }
         }
         public async Task Stop()

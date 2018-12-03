@@ -8,11 +8,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace TakoDeployXUnit.Fixtures
+namespace TakoDeploy.Tests.Common.Fixtures
 {
     public class DatabaseFixture : IDisposable
     {
-        public string[] Databases = new string[] 
+        public string[] Databases = new string[]
         {
             "TakoDeploy_Test_1",
             "TakoDeploy_Test_2",
@@ -36,7 +36,7 @@ namespace TakoDeployXUnit.Fixtures
                 DeleteDatabase(dbName);
                 Execute($"IF NOT EXISTS(select * from sys.databases where name= '{dbName}') CREATE DATABASE {dbName};");
             }
-            
+
         }
 
         private void Execute(string sql)
@@ -52,7 +52,7 @@ namespace TakoDeployXUnit.Fixtures
             }
         }
 
- 
+
 
         private void SetConnectionString(string instance)
         {

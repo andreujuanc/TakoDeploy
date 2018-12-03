@@ -344,7 +344,8 @@ namespace TakoDeployWPF
         {
             var VM = new SettingsViewModel()
             {
-                EnableTelemetry = Properties.Settings.Default.EnableTelemetry
+                EnableTelemetry = Properties.Settings.Default.EnableTelemetry,
+                MaxParallelismDegree = Properties.Settings.Default.MaxParallelismDegree
             };
 
             var view = new Settings
@@ -361,6 +362,7 @@ namespace TakoDeployWPF
                 if ((bool)result)
                 {
                     Properties.Settings.Default.EnableTelemetry = VM.EnableTelemetry;
+                    Properties.Settings.Default.MaxParallelismDegree = VM.MaxParallelismDegree;
                     Properties.Settings.Default.Save();
                 }
                 else
@@ -388,7 +390,11 @@ namespace TakoDeployWPF
 
         private async void ExecuteRunDeployCommand(object o)
         {
-            await DocumentManager.Current.Deploy(this.IsQueueModeOn);
+            await DocumentManager.Current.Deploy(new DeployOptions()
+            {
+                ExecuteInQueueMode = this.IsQueueModeOn,
+                MaxParallelismDegree = Properties.Settings.Default.MaxParallelismDegree
+            });
         }
 
         private async void ExecuteStopDeployCommand(object o)

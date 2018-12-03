@@ -4,10 +4,10 @@ using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TakoDeploy.Tests.Common.Fixtures;
 using TakoDeployCore;
 using TakoDeployCore.DataContext;
 using TakoDeployCore.Model;
-using TakoDeployXUnit.Fixtures;
 using Xunit;
 
 namespace TakoDeployXUnit.Deployment

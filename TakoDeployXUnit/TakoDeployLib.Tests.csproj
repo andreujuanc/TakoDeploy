@@ -66,7 +66,6 @@
     <Compile Include="Class1.cs" />
     <Compile Include="Deployment\MultiDatabaseDeploymentTest.cs" />
     <Compile Include="Deployment\ScriptManager.cs" />
-    <Compile Include="Fixtures\DatabaseFixture.cs" />
     <Compile Include="Model\DeploymentTest.cs" />
     <Compile Include="Model\DocumentManagerTest.cs" />
     <Compile Include="Model\SourceDatabaseTest.cs" />
@@ -78,6 +77,10 @@
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\TakoDeploy.Tests.Common\TakoDeploy.Tests.Common.csproj">
+      <Project>{1C09D203-299A-46C4-AE37-A4AD72DF2A59}</Project>
+      <Name>TakoDeploy.Tests.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TakoDeployLib\TakoDeployLib.csproj">
       <Project>{7E7105D9-EDE6-41FA-8E53-8AE3ED9403E6}</Project>
       <Name>TakoDeployLib</Name>

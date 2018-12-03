@@ -21,7 +21,7 @@ namespace TakoDeployCore
             Deployment = deployment;
         }
         
-        public async Task BeginDeploy(bool executeInQueueMode, Action<ProgressEventArgs> onProgress)
+        public async Task BeginDeploy(DeployOptions options, Action<ProgressEventArgs> onProgress)
         {
             try
             {
@@ -43,7 +43,7 @@ namespace TakoDeployCore
                 
                 //await Task.Factory.StartNew(() => Deployment.StartAsync(progress));
                 OnProgress(new ProgressEventArgs(string.Format("Deploying...")));
-                await Deployment.StartAsync(progress, executeInQueueMode, CTS.Token);
+                await Deployment.StartAsync(progress, options, CTS.Token);
                 
                 var deploymentTime = (DateTime.Now - startTime).TotalSeconds;
                 var status = this.Deployment.Targets.Where(x => x.DeploymentState != Database.DatabaseDeploymentState.Success).Count() > 0 ? "with errors" : "successfully";
