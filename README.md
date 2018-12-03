@@ -3,7 +3,7 @@ Best multi database sql script deployment tool
 
 [![Join the chat at https://gitter.im/andreujuanc/TakoDeploy](https://badges.gitter.im/andreujuanc/TakoDeploy.svg)](https://gitter.im/andreujuanc/TakoDeploy?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-[![Build Status](https://dev.azure.com/andreujuan/TakoDeploy/_apis/build/status/andreujuanc.TakoDeploy)](https://dev.azure.com/andreujuan/TakoDeploy/_build/latest?definitionId=12)
+[![Build Status](https://dev.azure.com/andreujuan/TakoDeploy/_apis/build/status/TakoDeploy-.NET%20Desktop-CI)](https://dev.azure.com/andreujuan/TakoDeploy/_build/latest?definitionId=14)
 
 ### Read the Docs
 https://andreujuanc.github.io/TakoDeploy/
