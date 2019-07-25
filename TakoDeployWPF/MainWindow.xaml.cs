@@ -37,9 +37,6 @@ namespace TakoDeployWPF
             this.DataContext = new MainViewModel();
             this.Loaded += MainWindow_Loaded;
             this.SizeChanged += MainWindow_SizeChanged;
-           
-            Console.WriteLine("Main Window Ctor");
-
         }
 
         private void CurrentDomain_ProcessExit(object sender, EventArgs e)
@@ -395,6 +392,8 @@ namespace TakoDeployWPF
                 ExecuteInQueueMode = this.IsQueueModeOn,
                 MaxParallelismDegree = Properties.Settings.Default.MaxParallelismDegree
             });
+
+            Telemetry.AppInsightTelemetry.TrackEvent(nameof(ExecuteRunDeployCommand));
         }
 
         private async void ExecuteStopDeployCommand(object o)
